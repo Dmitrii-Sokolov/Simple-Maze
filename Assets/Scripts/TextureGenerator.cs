@@ -4,18 +4,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum GenType
+public class TextureGenerator : MonoBehaviour
 {
-    HS, HV, Gray, Random, RandomGradient, Maze, MazeStep, AutoMaze, AutoMazeStop, MazeClear
-}
-
-public class TextureGenerator : MonoBehaviour {
-
     [SerializeField]
     private Slider SizeInput;
 
     [SerializeField]
     private Slider StepInput;
+
+    [SerializeField]
+    private Image targetImage;
+
+    [SerializeField]
+    private Texture2D outTexture;
+
+
+    public enum GenType
+    {
+        HS, HV, Gray, Random, RandomGradient, Maze, MazeStep, AutoMaze, AutoMazeStop, MazeClear
+    }
+
+    private float currentTime = 0;
+    private float nextTime = 0;
+    private float timeStep = 0.008f;
+
+    private bool isAutoMaze = false;
+    private bool NeedRedraw = false;
+    private ThickWalledMaze Maze;
+    private Color[] ColorMap;
 
     private int size;
     private int Size
@@ -25,7 +41,7 @@ public class TextureGenerator : MonoBehaviour {
             size = value;
             Maze = new ThickWalledMaze(Size, Size);
             ColorMap = new Color[Size * Size];
-            Command(GenType.AutoMaze);
+            outTexture.Resize(Size, Size);
         }
         get
         {
@@ -33,17 +49,7 @@ public class TextureGenerator : MonoBehaviour {
         }
     }
 
-    [SerializeField]
-    private Image targetImage;
-
-    [SerializeField]
-    private Texture2D outTexture;
-
-    private ThickWalledMaze Maze;
-    private bool NeedRedraw = false;
-    private Color[] ColorMap;
-
-    void Start ()
+    void Start()
     {
         outTexture = new Texture2D(Size, Size, TextureFormat.ARGB32, false);
         outTexture.filterMode = FilterMode.Point;
@@ -54,44 +60,52 @@ public class TextureGenerator : MonoBehaviour {
             StepInput.onValueChanged.AddListener(c => timeStep = Mathf.Pow(c, 4));
 
         if (null != SizeInput)
-            SizeInput.onValueChanged.AddListener(c => Size = (int) c);
+            SizeInput.onValueChanged.AddListener(c => Size = (int)c);
     }
 
     public void Command(GenType type)
     {
-        NeedRedraw = true;
-
         switch (type)
         {
             default:
             case GenType.HS:
                 for (int i = 0; i < Size * Size; i++)
                     ColorMap[i] = Color.HSVToRGB((i / Size) / (float)Size, (i % Size) / (float)Size, 1f);
+                Visualize();
+                isAutoMaze = false;
                 break;
             case GenType.HV:
                 for (int i = 0; i < Size * Size; i++)
                     ColorMap[i] = Color.HSVToRGB((i / Size) / (float)Size, 1f, (i % Size) / (float)Size);
+                Visualize();
+                isAutoMaze = false;
                 break;
             case GenType.Random:
                 for (int i = 0; i < Size * Size; i++)
                     ColorMap[i] = UnityEngine.Random.ColorHSV();
+                Visualize();
+                isAutoMaze = false;
                 break;
             case GenType.Gray:
                 for (int i = 0; i < Size * Size; i++)
                     ColorMap[i] = UnityEngine.Random.ColorHSV(0f, 0f, 0f, 0f);
+                Visualize();
+                isAutoMaze = false;
                 break;
             case GenType.RandomGradient:
                 var hue = UnityEngine.Random.value;
                 for (int i = 0; i < Size * Size; i++)
                     ColorMap[i] = Color.HSVToRGB(hue, (i / Size) / (float)Size, (i % Size) / (float)Size);
+                Visualize();
+                isAutoMaze = false;
                 break;
             case GenType.Maze:
                 Maze.Generate();
-                MazeToColor();
+                NeedRedraw = true;
                 break;
             case GenType.MazeStep:
                 Maze.NextStep();
-                MazeToColor();
+                NeedRedraw = true;
                 break;
             case GenType.AutoMaze:
                 isAutoMaze = true;
@@ -100,18 +114,14 @@ public class TextureGenerator : MonoBehaviour {
                 break;
             case GenType.AutoMazeStop:
                 isAutoMaze = false;
+                NeedRedraw = true;
                 break;
             case GenType.MazeClear:
                 Maze.Clear();
-                MazeToColor();
+                NeedRedraw = true;
                 break;
         }
     }
-
-    private float currentTime = 0;
-    private float nextTime = 0;
-    private bool isAutoMaze = false;
-    private float timeStep = 0.1f;
 
     private void Update()
     {
@@ -125,7 +135,6 @@ public class TextureGenerator : MonoBehaviour {
                 nextTime += timeStep;
                 if (!Maze.NextStep())
                 {
-                    MazeToColor();
                     isAutoMaze = false;
                     Debug.Log("Finished in " + currentTime + " s");
                     break;
@@ -135,12 +144,10 @@ public class TextureGenerator : MonoBehaviour {
 
         if (NeedRedraw)
         {
-            if (isAutoMaze)
-                MazeToColor();
-
-            Visualize(ColorMap);
+            MazeToColor();
+            Visualize();
+            NeedRedraw = false;
         }
-        NeedRedraw = false;
     }
 
     private void MazeToColor()
@@ -157,10 +164,9 @@ public class TextureGenerator : MonoBehaviour {
         }
     }
 
-    private void Visualize(Color[] newColors)
+    private void Visualize()
     {
-        outTexture.Resize(Size, Size);
-        outTexture.SetPixels(newColors);
+        outTexture.SetPixels(ColorMap);
         outTexture.Apply();
         targetImage.sprite = Sprite.Create(outTexture, new Rect(0, 0, Size, Size), new Vector2(0.5f, 0.5f));
     }

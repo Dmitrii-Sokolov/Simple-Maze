@@ -26,7 +26,7 @@ public class GenerateButton : MonoBehaviour {
         if (buttonPrefab == null)
             Debug.LogError("GenerateButton : buttonPrefab isn't set");
 
-        foreach (GenType element in Enum.GetValues(typeof(GenType)))
+        foreach (TextureGenerator.GenType element in Enum.GetValues(typeof(TextureGenerator.GenType)))
         {
             var newButton = Instantiate(buttonPrefab, listRoot);
             newButton.GetComponentInChildren<Text>().text = element.ToString();
