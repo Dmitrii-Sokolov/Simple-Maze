@@ -27,6 +27,7 @@ public class TextureGenerator : MonoBehaviour
     private float currentTime = 0;
     private float nextTime = 0;
     private float timeStep = 0.008f;
+    private GenType lastCommand = GenType.AutoMaze;
 
     private bool isAutoMaze = false;
     private bool NeedRedraw = false;
@@ -42,6 +43,7 @@ public class TextureGenerator : MonoBehaviour
             Maze = new ThickWalledMaze(Size, Size);
             ColorMap = new Color[Size * Size];
             outTexture.Resize(Size, Size);
+            Command(lastCommand);
         }
         get
         {
@@ -54,7 +56,6 @@ public class TextureGenerator : MonoBehaviour
         outTexture = new Texture2D(Size, Size, TextureFormat.ARGB32, false);
         outTexture.filterMode = FilterMode.Point;
         Size = 30;
-        Command(GenType.AutoMaze);
 
         if (null != StepInput)
             StepInput.onValueChanged.AddListener(c => timeStep = Mathf.Pow(c, 4));
@@ -65,6 +66,7 @@ public class TextureGenerator : MonoBehaviour
 
     public void Command(GenType type)
     {
+        lastCommand = type;
         switch (type)
         {
             default:
