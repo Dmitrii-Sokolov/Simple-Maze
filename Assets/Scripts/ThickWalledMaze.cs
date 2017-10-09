@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class ThickWalledMaze
 {
+    public enum State
+    {
+        Full, Empty, Rig
+    }
+
     private readonly int Width;
     private readonly int Height;
 
@@ -13,46 +18,14 @@ public class ThickWalledMaze
     private Cell CurrentCell = null;
     private Stack<Cell> MazeTrace = new Stack<Cell>();
 
-    public bool[,] Maze
+    public State[,] Maze
     {
         get
         {
-            return bits;
-        }
-    }
-
-    public bool[] LinearMaze
-    {
-        get
-        {
-            var outMaze = new bool[Width * Height];
+            var outMaze = new State[Width, Height];
             for (int i = 0; i < Width; i++)
                 for (int n = 0; n < Height; n++)
-                    outMaze[i + n * Width] = bits[i, n];
-            return outMaze;
-        }
-    }
-
-    public byte[] LinearMazeBytes
-    {
-        get
-        {
-            var outMaze = new byte[Width * Height];
-            for (int i = 0; i < Width; i++)
-                for (int n = 0; n < Height; n++)
-                    outMaze[i + n * Width] = nears[i, n];
-            return outMaze;
-        }
-    }
-
-    public bool[] LinearMazeCurrentCell
-    {
-        get
-        {
-            var outMaze = new bool[Width * Height];
-            for (int i = 0; i < Width; i++)
-                for (int n = 0; n < Height; n++)
-                    outMaze[i + n * Width] = (null != CurrentCell) && (CurrentCell.X == i) && (CurrentCell.Y == n);
+                    outMaze[i, n] = (null != CurrentCell) && (CurrentCell.X == i) && (CurrentCell.Y == n) ? State.Rig : bits[i, n] ? State.Empty : State.Full;
             return outMaze;
         }
     }
@@ -121,7 +94,7 @@ public class ThickWalledMaze
         return ((x < Width) && (x >= 0) && (y < Height) && (y >= 0));
     }
 
-    public class Cell
+    private class Cell
     {
         private class Shift
         {
