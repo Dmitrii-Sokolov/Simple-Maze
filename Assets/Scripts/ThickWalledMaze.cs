@@ -2,76 +2,55 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ThickWalledMaze
+public class ThickWalledMaze : CellMaze
 {
-    public enum State
+    private sbyte[,] nodeDegrees;
+
+    public override int OutTextureWidth { get { return Width; } }
+    public override int OutTextureHeight { get { return Height; } }
+
+    public override CellMaze SetSize(int width, int height)
     {
-        Full, Empty, Rig
+        return new ThickWalledMaze(width, height);
     }
 
-    private readonly int Width;
-    private readonly int Height;
-
-    private bool[,] bits;
-    private byte[,] nears;
-
-    private Cell CurrentCell = null;
-    private Stack<Cell> MazeTrace = new Stack<Cell>();
-
-    public State[,] Maze
+    protected override void MazeToColor()
     {
-        get
-        {
-            var outMaze = new State[Width, Height];
-            for (int i = 0; i < Width; i++)
-                for (int n = 0; n < Height; n++)
-                    outMaze[i, n] = (null != CurrentCell) && (CurrentCell.X == i) && (CurrentCell.Y == n) ? State.Rig : bits[i, n] ? State.Empty : State.Full;
-            return outMaze;
-        }
-    }
-
-    private Cell this[int x, int y]
-    {
-        get
-        {
-            if (InMaze(x, y))
-                return new Cell(x, y, this);
-            else
-                return null;
-        }
-    }
-
-    public ThickWalledMaze(int width, int height)
-    {
-        Width = width;
-        Height = height;
-        bits = new bool[Width, Height];
-        nears = new byte[Width, Height];
-        Clear();
-    }
-
-    public void Clear()
-    {
-        CurrentCell = this[Random.Range(0, Width), Random.Range(0, Height)];
-        //CurrentCell = this[Width / 2, Height / 2];
-        MazeTrace.Clear();
-        for (int i = 0; i < Width; i++)
-            for (int n = 0; n < Height; n++)
+        for (int i = 0; i < OutTextureWidth; i++)
+            for (int n = 0; n < OutTextureHeight; n++)
             {
-                bits[i, n] = false;
-                nears[i, n] = 0;
+                if ((null != CurrentCell) && (CurrentCell.X == i) && (CurrentCell.Y == n))
+                    colorMap[i + n * OutTextureWidth] = Color.red;
+                else
+                    colorMap[i + n * OutTextureWidth] = passes[i, n] ? Color.blue : Color.black;
             }
     }
 
-    public void Generate()
+    public ThickWalledMaze(int width, int height) : base(width, height)
     {
-        while (NextStep()) ;
+        nodeDegrees = new sbyte[Width, Height];
+        Clear();
     }
 
-    public bool NextStep()
+    public override void Clear()
     {
-        CurrentCell.Pass = true;
-        var choices = CurrentCell.Neighbours(false, 1);
+        base.Clear();
+        for (int i = 0; i < Width; i++)
+            for (int n = 0; n < Height; n++)
+                nodeDegrees[i, n] = 0;
+    }
+
+    public override bool NextStep()
+    {
+        SetPass(CurrentCell, true);
+        var choices = new List<Cell>();
+
+        foreach (var item in CurrentCell.AdjQuad)
+            if (InMaze(item))
+                if (!GetPass(item))
+                    if (GetDegree(item) <= 1)
+                        choices.Add(item);
+
         if (choices.Count == 0)
         {
             if (MazeTrace.Count == 0)
@@ -89,101 +68,30 @@ public class ThickWalledMaze
         return true;
     }
 
-    private bool InMaze(int x, int y)
+    private sbyte GetDegree(Cell cell)
     {
-        return ((x < Width) && (x >= 0) && (y < Height) && (y >= 0));
+        return nodeDegrees[cell.X, cell.Y];
     }
 
-    private class Cell
+    private void DegreeIncrease(Cell cell, sbyte count)
     {
-        private class Shift
-        {
-            public readonly int Dx;
-            public readonly int Dy;
-            public Shift(int dx, int dy)
+        nodeDegrees[cell.X, cell.Y] += count;
+    }
+
+    private void SetPass(Cell cell, bool pass)
+    {
+        if (InMaze(cell))
+            if (passes[cell.X, cell.Y] != pass)
             {
-                Dx = dx;
-                Dy = dy;
+                passes[cell.X, cell.Y] = pass;
+                foreach (var item in cell.AdjQuad)
+                    if (InMaze(item))
+                        DegreeIncrease(item, pass ? (sbyte) 1 : (sbyte) -1);
             }
-        }
+    }
 
-        private readonly List<Shift> shifts = new List<Shift>()
-        {
-            new Shift(-1, 0),
-            new Shift(1, 0),
-            new Shift(0, -1),
-            new Shift(0, 1),
-        };
-
-        private ThickWalledMaze Parent;
-        public int X;
-        public int Y;
-        public byte Near
-        {
-            set
-            {
-                Parent.nears[X, Y] = value;
-            }
-            get
-            {
-                return Parent.nears[X, Y];
-            }
-        }
-
-        public bool Pass
-        {
-            set
-            {
-                if (Parent.bits[X, Y] != value)
-                {
-                    foreach (var item in Neighbours())
-                        if (value)
-                            item.Near++;
-                        else
-                            item.Near--;
-                    Parent.bits[X, Y] = value;
-                }
-            }
-            get
-            {
-                return Parent.bits[X, Y];
-            }
-        }
-
-        public Cell(int x, int y, ThickWalledMaze parent)
-        {
-            X = x;
-            Y = y;
-            Parent = parent;
-        }
-
-        public List<Cell> Neighbours()
-        {
-            var outList = new List<Cell>();
-            foreach (var item in shifts)
-                if (Parent.InMaze(X + item.Dx, Y + item.Dy))
-                    outList.Add(new Cell(X + item.Dx, Y + item.Dy, Parent));
-            return outList;
-        }
-
-        public List<Cell> Neighbours(bool mask)
-        {
-            var outList = new List<Cell>();
-            foreach (var item in shifts)
-                if (Parent.InMaze(X + item.Dx, Y + item.Dy) && (Parent.bits[X + item.Dx, Y + item.Dy] == mask))
-                    outList.Add(new Cell(X + item.Dx, Y + item.Dy, Parent));
-            return outList;
-        }
-
-        public List<Cell> Neighbours(bool mask, byte maxNear)
-        {
-            var outList = new List<Cell>();
-            foreach (var item in shifts)
-                if (Parent.InMaze(X + item.Dx, Y + item.Dy)
-                    && (Parent.bits[X + item.Dx, Y + item.Dy] == mask)
-                    && (Parent.nears[X + item.Dx, Y + item.Dy] <= maxNear))
-                    outList.Add(new Cell(X + item.Dx, Y + item.Dy, Parent));
-            return outList;
-        }
+    private bool GetPass(Cell cell)
+    {
+        return passes[cell.X, cell.Y];
     }
 }

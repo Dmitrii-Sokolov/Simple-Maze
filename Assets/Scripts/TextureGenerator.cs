@@ -31,7 +31,7 @@ public class TextureGenerator : MonoBehaviour
 
     private bool isAutoMaze = false;
     private bool NeedRedraw = false;
-    private ThickWalledMaze Maze;
+    private ThinWalledMaze Maze;
     private Color[] ColorMap;
 
     private int size;
@@ -40,9 +40,9 @@ public class TextureGenerator : MonoBehaviour
         set
         {
             size = value;
-            Maze = new ThickWalledMaze(Size, Size);
-            ColorMap = new Color[Size * Size];
-            outTexture.Resize(Size, Size);
+            Maze = new ThinWalledMaze(Size, Size);
+            outTexture = new Texture2D(Maze.OutTextureWidth, Maze.OutTextureHeight, TextureFormat.ARGB32, false);
+            outTexture.filterMode = FilterMode.Point;
             Command(lastCommand);
         }
         get
@@ -53,8 +53,6 @@ public class TextureGenerator : MonoBehaviour
 
     void Start()
     {
-        outTexture = new Texture2D(Size, Size, TextureFormat.ARGB32, false);
-        outTexture.filterMode = FilterMode.Point;
         Size = 30;
 
         if (null != StepInput)
@@ -113,32 +111,9 @@ public class TextureGenerator : MonoBehaviour
 
         if (NeedRedraw)
         {
-            MazeToColor();
+            ColorMap = Maze.ToColor;
             Visualize();
             NeedRedraw = false;
-        }
-    }
-
-    private void MazeToColor()
-    {
-        var maze = Maze.Maze;
-
-        for (int i = 0; i < Size; i++)
-            for (int n = 0; n < Size; n++)
-                ColorMap[i + n*Size] = MazeStateToColor(maze[i, n]);
-    }
-
-    private Color MazeStateToColor(ThickWalledMaze.State state)
-    {
-        switch (state)
-        {
-            default:
-            case ThickWalledMaze.State.Empty:
-                return Color.blue;
-            case ThickWalledMaze.State.Full:
-                return Color.black;
-            case ThickWalledMaze.State.Rig:
-                return Color.red;
         }
     }
 
@@ -159,6 +134,6 @@ public class TextureGenerator : MonoBehaviour
 
         outTexture.SetPixels(ColorMap);
         outTexture.Apply();
-        targetImage.sprite = Sprite.Create(outTexture, new Rect(0, 0, Size, Size), new Vector2(0.5f, 0.5f));
+        targetImage.sprite = Sprite.Create(outTexture, new Rect(0, 0, Maze.OutTextureWidth, Maze.OutTextureHeight), new Vector2(0.5f, 0.5f));
     }
 }
