@@ -20,57 +20,31 @@ public class ThinWalledMaze : CellMaze
 
     protected override void MazeToColor()
     {
-        Color temp;
-
         for (int i = 0; i < Width; i++)
             for (int n = 0; n < Height; n++)
             {
-                temp = passes[i, n] ? Color.blue : Color.black;
-                colorMap[(4 * i + 1) + (4 * n + 1) * OutTextureWidth] = temp;
-                colorMap[(4 * i + 2) + (4 * n + 1) * OutTextureWidth] = temp;
-                colorMap[(4 * i + 1) + (4 * n + 2) * OutTextureWidth] = temp;
-                colorMap[(4 * i + 2) + (4 * n + 2) * OutTextureWidth] = temp;
-                colorMap[(4 * i + 0) + (4 * n + 0) * OutTextureWidth] = Color.black;
-                colorMap[(4 * i + 3) + (4 * n + 0) * OutTextureWidth] = Color.black;
-                colorMap[(4 * i + 0) + (4 * n + 3) * OutTextureWidth] = Color.black;
-                colorMap[(4 * i + 3) + (4 * n + 3) * OutTextureWidth] = Color.black;
+                colorMap[(2 * i + 1) + (2 * n + 1) * OutTextureWidth] = passes[i, n] ? Color.blue : Color.black;
+                colorMap[(2 * i + 0) + (2 * n + 0) * OutTextureWidth] = Color.black;
             }
 
         for (int i = 0; i < Width; i++)
             for (int n = 0; n < Height - 1; n++)
-            {
-                temp = vertPasses[i, n] ? Color.blue : Color.black;
-                colorMap[(4 * i + 1) + (4 * n + 3) * OutTextureWidth] = temp;
-                colorMap[(4 * i + 2) + (4 * n + 3) * OutTextureWidth] = temp;
-                colorMap[(4 * i + 1) + (4 * n + 4) * OutTextureWidth] = temp;
-                colorMap[(4 * i + 2) + (4 * n + 4) * OutTextureWidth] = temp;
-            }
+                colorMap[(2 * i + 1) + (2 * n + 2) * OutTextureWidth] = vertPasses[i, n] ? Color.blue : Color.black;
 
         for (int i = 0; i < Width - 1; i++)
             for (int n = 0; n < Height; n++)
-            {
-                temp = horPasses[i, n] ? Color.blue : Color.black;
-                colorMap[(4 * i + 3) + (4 * n + 1) * OutTextureWidth] = temp;
-                colorMap[(4 * i + 4) + (4 * n + 1) * OutTextureWidth] = temp;
-                colorMap[(4 * i + 3) + (4 * n + 2) * OutTextureWidth] = temp;
-                colorMap[(4 * i + 4) + (4 * n + 2) * OutTextureWidth] = temp;
-            }
+                colorMap[(2 * i + 2) + (2 * n + 1) * OutTextureWidth] = horPasses[i, n] ? Color.blue : Color.black;
 
         if (null != CurrentCell)
-        {
-            colorMap[(4 * CurrentCell.X + 1) + (4 * CurrentCell.Y + 1) * OutTextureWidth] = Color.red;
-            colorMap[(4 * CurrentCell.X + 2) + (4 * CurrentCell.Y + 1) * OutTextureWidth] = Color.red;
-            colorMap[(4 * CurrentCell.X + 1) + (4 * CurrentCell.Y + 2) * OutTextureWidth] = Color.red;
-            colorMap[(4 * CurrentCell.X + 2) + (4 * CurrentCell.Y + 2) * OutTextureWidth] = Color.red;
-        }
+            colorMap[(2 * CurrentCell.X + 1) + (2 * CurrentCell.Y + 1) * OutTextureWidth] = Color.red;
     }
 
     public ThinWalledMaze(int width, int height) : base(width, height)
     {
         vertPasses = new bool[Width, Height - 1];
         horPasses = new bool[Width - 1, Height];
-        texHeight = 4 * Height;
-        texWidth = 4 * Width;
+        texHeight = 2 * Height + 1;
+        texWidth = 2 * Width + 1;
         Clear();
     }
 
