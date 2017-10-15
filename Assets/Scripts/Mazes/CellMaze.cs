@@ -93,7 +93,7 @@ public abstract class CellMaze
         Texture.filterMode = FilterMode.Point;
         for (int i = 0; i < OutTextureWidth; i++)
             for (int n = 0; n < OutTextureHeight; n++)
-                Texture.SetPixel(i, n, Color.black);
+                Texture.SetPixel(i, n, Full);
 
         passes = new bool[Width, Height];
         for (int i = 0; i < Width; i++)
