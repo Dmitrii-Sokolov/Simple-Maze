@@ -18,25 +18,24 @@ public class ThinWalledMaze : CellMaze
         return new ThinWalledMaze(width, height);
     }
 
-    protected override void MazeToColor()
+    protected override Cell CurrentCell
     {
-        for (int i = 0; i < Width; i++)
-            for (int n = 0; n < Height; n++)
-            {
-                colorMap[(2 * i + 1) + (2 * n + 1) * OutTextureWidth] = passes[i, n] ? Color.blue : Color.black;
-                colorMap[(2 * i + 0) + (2 * n + 0) * OutTextureWidth] = Color.black;
-            }
+        set
+        {
+            if (null != currentCell)
+                if (InMaze(currentCell))
+                    colorMap[(2 * currentCell.X + 1) + (2 * currentCell.Y + 1) * OutTextureWidth] = GetPass(currentCell) ? Color.blue : Color.black;
 
-        for (int i = 0; i < Width; i++)
-            for (int n = 0; n < Height - 1; n++)
-                colorMap[(2 * i + 1) + (2 * n + 2) * OutTextureWidth] = vertPasses[i, n] ? Color.blue : Color.black;
+            currentCell = value;
 
-        for (int i = 0; i < Width - 1; i++)
-            for (int n = 0; n < Height; n++)
-                colorMap[(2 * i + 2) + (2 * n + 1) * OutTextureWidth] = horPasses[i, n] ? Color.blue : Color.black;
-
-        if (null != CurrentCell)
-            colorMap[(2 * CurrentCell.X + 1) + (2 * CurrentCell.Y + 1) * OutTextureWidth] = Color.red;
+            if (null != currentCell)
+                if (InMaze(currentCell))
+                    colorMap[(2 * currentCell.X + 1) + (2 * currentCell.Y + 1) * OutTextureWidth] = Color.red;
+        }
+        get
+        {
+            return currentCell;
+        }
     }
 
     public ThinWalledMaze(int width, int height) : base(width, height)
@@ -92,16 +91,27 @@ public class ThinWalledMaze : CellMaze
     {
         if (InMaze(cell))
             if (passes[cell.X, cell.Y] != pass)
+            {
                 passes[cell.X, cell.Y] = pass;
+                colorMap[(2 * cell.X + 1) + (2 * cell.Y + 1) * OutTextureWidth] = pass ? Color.blue : Color.black;
+            }
     }
 
     private void SetTunnel(Cell cell, Cell to, bool tunnel)
     {
         if ((to.X - cell.X) == 0)
+        {
             vertPasses[cell.X, Mathf.Min(cell.Y, to.Y)] = tunnel;
+            colorMap[(2 * cell.X + 1) + (2 * Mathf.Min(cell.Y, to.Y) + 2) * OutTextureWidth] = tunnel ? Color.blue : Color.black;
+            return;
+        }
+
 
         if ((to.Y - cell.Y) == 0)
+        {
             horPasses[Mathf.Min(cell.X, to.X), cell.Y] = tunnel;
+            colorMap[(2 * Mathf.Min(cell.X, to.X) + 2) + (2 * cell.Y + 1) * OutTextureWidth] = tunnel ? Color.blue : Color.black;
+        }
     }
 
     private bool GetTunnel(Cell cell, Cell to)

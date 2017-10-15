@@ -14,16 +14,25 @@ public class ThickWalledMaze : CellMaze
         return new ThickWalledMaze(width, height);
     }
 
-    protected override void MazeToColor()
+
+    protected override Cell CurrentCell
     {
-        for (int i = 0; i < OutTextureWidth; i++)
-            for (int n = 0; n < OutTextureHeight; n++)
-            {
-                if ((null != CurrentCell) && (CurrentCell.X == i) && (CurrentCell.Y == n))
-                    colorMap[i + n * OutTextureWidth] = Color.red;
-                else
-                    colorMap[i + n * OutTextureWidth] = passes[i, n] ? Color.blue : Color.black;
-            }
+        set
+        {
+            if (null != currentCell)
+                if (InMaze(currentCell))
+                    colorMap[currentCell.X + currentCell.Y * OutTextureWidth] = GetPass(currentCell) ? Color.blue : Color.black;
+
+            currentCell = value;
+
+            if (null != currentCell)
+                if (InMaze(currentCell))
+                    colorMap[currentCell.X + currentCell.Y * OutTextureWidth] = Color.red;
+        }
+        get
+        {
+            return currentCell;
+        }
     }
 
     public ThickWalledMaze(int width, int height) : base(width, height)
@@ -84,6 +93,7 @@ public class ThickWalledMaze : CellMaze
             if (passes[cell.X, cell.Y] != pass)
             {
                 passes[cell.X, cell.Y] = pass;
+                colorMap[cell.X + cell.Y * OutTextureWidth] = pass ? Color.blue : Color.black;
                 foreach (var item in cell.AdjQuad)
                     if (InMaze(item))
                         DegreeIncrease(item, pass ? (sbyte) 1 : (sbyte) -1);

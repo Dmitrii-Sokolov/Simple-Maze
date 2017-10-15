@@ -49,7 +49,8 @@ public abstract class CellMaze
     protected readonly int Width;
     protected readonly int Height;
     protected bool[,] passes;
-    protected Cell CurrentCell = null;
+    protected Cell currentCell = null;
+    protected abstract Cell CurrentCell { set; get; }
     protected Stack<Cell> MazeTrace = new Stack<Cell>();
 
     public abstract int OutTextureWidth { get; }
@@ -62,18 +63,9 @@ public abstract class CellMaze
     {
         get
         {
-            if (colorMap == null)
-            {
-                colorMap = new Color[OutTextureWidth * OutTextureHeight];
-                for (int i = 0; i < OutTextureWidth * OutTextureHeight; i++)
-                    colorMap[i] = Color.black;
-            }
-            MazeToColor();
             return colorMap;
         }
     }
-
-    protected abstract void MazeToColor();
 
     protected bool InMaze(Cell cell)
     {
@@ -94,6 +86,10 @@ public abstract class CellMaze
 
     public virtual void Clear()
     {
+        colorMap = new Color[OutTextureWidth * OutTextureHeight];
+        for (int i = 0; i < OutTextureWidth * OutTextureHeight; i++)
+            colorMap[i] = Color.black;
+
         CurrentCell = new Cell(Random.Range(0, Width), Random.Range(0, Height));
         MazeTrace.Clear();
         for (int i = 0; i < Width; i++)
