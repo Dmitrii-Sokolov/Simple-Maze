@@ -4,19 +4,17 @@ using UnityEngine;
 
 public class ThickWalledMaze : CellMaze
 {
-    protected override Cell CurrentCell
+    protected override IntVector2 CurrentCell
     {
         set
         {
-            if (null != currentCell)
-                if (InMaze(currentCell))
-                    Texture.SetPixel(currentCell.X, currentCell.Y, GetPass(currentCell) ? Color.blue : Color.black);
+            if (InMaze(currentCell))
+                Texture.SetPixel(currentCell.x, currentCell.y, GetPass(currentCell) ? Color.blue : Color.black);
 
             currentCell = value;
 
-            if (null != currentCell)
-                if (InMaze(currentCell))
-                    Texture.SetPixel(currentCell.X, currentCell.Y, Color.red);
+            if (InMaze(currentCell))
+                Texture.SetPixel(currentCell.x, currentCell.y, Color.red);
         }
         get
         {
@@ -49,13 +47,16 @@ public class ThickWalledMaze : CellMaze
     public override bool NextStep()
     {
         SetPass(CurrentCell, true);
-        var choices = new List<Cell>();
+        var choices = new List<IntVector2>();
 
-        foreach (var item in CurrentCell.AdjQuad)
-            if (InMaze(item))
-                if (!GetPass(item))
-                    if (GetDegree(item) <= 1)
-                        choices.Add(item);
+        foreach (var item in shifts)
+        {
+            var adj = CurrentCell + item;
+            if (InMaze(adj))
+                if (!GetPass(adj))
+                    if (GetDegree(adj) <= 1)
+                        choices.Add(adj);
+        }
 
         if (choices.Count == 0)
         {
@@ -74,26 +75,29 @@ public class ThickWalledMaze : CellMaze
         return true;
     }
 
-    private void SetPass(Cell cell, bool pass)
+    private void SetPass(IntVector2 cell, bool pass)
     {
         if (InMaze(cell))
-            if (passes[cell.X, cell.Y] != pass)
+            if (passes[cell.x, cell.y] != pass)
             {
-                passes[cell.X, cell.Y] = pass;
-                Texture.SetPixel(cell.X, cell.Y, pass ? Color.blue : Color.black);
-                foreach (var item in cell.AdjQuad)
-                    if (InMaze(item))
-                        DegreeIncrease(item, pass ? (sbyte) 1 : (sbyte) -1);
+                passes[cell.x, cell.y] = pass;
+                Texture.SetPixel(cell.x, cell.y, pass ? Color.blue : Color.black);
+                foreach (var item in shifts)
+                {
+                    var adj = cell + item;
+                    if (InMaze(adj))
+                        DegreeIncrease(adj, pass ? (sbyte)1 : (sbyte)-1);
+                }
             }
     }
 
-    private sbyte GetDegree(Cell cell)
+    private sbyte GetDegree(IntVector2 cell)
     {
-        return nodeDegrees[cell.X, cell.Y];
+        return nodeDegrees[cell.x, cell.y];
     }
 
-    private void DegreeIncrease(Cell cell, sbyte count)
+    private void DegreeIncrease(IntVector2 cell, sbyte count)
     {
-        nodeDegrees[cell.X, cell.Y] += count;
+        nodeDegrees[cell.x, cell.y] += count;
     }
 }

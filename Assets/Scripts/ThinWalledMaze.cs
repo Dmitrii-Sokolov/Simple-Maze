@@ -4,19 +4,17 @@ using UnityEngine;
 
 public class ThinWalledMaze : CellMaze
 {
-    protected override Cell CurrentCell
+    protected override IntVector2 CurrentCell
     {
         set
         {
-            if (null != currentCell)
-                if (InMaze(currentCell))
-                    Texture.SetPixel(2 * currentCell.X + 1, 2 * currentCell.Y + 1, GetPass(currentCell) ? Color.blue : Color.black);
+            if (InMaze(currentCell))
+                Texture.SetPixel(2 * currentCell.x + 1, 2 * currentCell.y + 1, GetPass(currentCell) ? Color.blue : Color.black);
 
             currentCell = value;
 
-            if (null != currentCell)
-                if (InMaze(currentCell))
-                    Texture.SetPixel(2 * currentCell.X + 1, 2 * currentCell.Y + 1, Color.red);
+            if (InMaze(currentCell))
+                Texture.SetPixel(2 * currentCell.x + 1, 2 * currentCell.y + 1, Color.red);
         }
         get
         {
@@ -65,12 +63,15 @@ public class ThinWalledMaze : CellMaze
     public override bool NextStep()
     {
         SetPass(CurrentCell, true);
-        var choices = new List<Cell>();
+        var choices = new List<IntVector2>();
 
-        foreach (var item in CurrentCell.AdjQuad)
-            if (InMaze(item))
-                if (!GetPass(item))
-                    choices.Add(item);
+        foreach (var item in shifts)
+        {
+            var adj = CurrentCell + item;
+            if (InMaze(adj))
+                if (!GetPass(adj))
+                    choices.Add(adj);
+        }
 
         if (choices.Count == 0)
         {
@@ -90,29 +91,29 @@ public class ThinWalledMaze : CellMaze
         return true;
     }
 
-    private void SetPass(Cell cell, bool pass)
+    private void SetPass(IntVector2 cell, bool pass)
     {
         if (InMaze(cell))
-            if (passes[cell.X, cell.Y] != pass)
+            if (passes[cell.x, cell.y] != pass)
             {
-                passes[cell.X, cell.Y] = pass;
-                Texture.SetPixel(2 * cell.X + 1, 2 * cell.Y + 1, pass ? Color.blue : Color.black);
+                passes[cell.x, cell.y] = pass;
+                Texture.SetPixel(2 * cell.x + 1, 2 * cell.y + 1, pass ? Color.blue : Color.black);
             }
     }
 
-    private void SetTunnel(Cell cell, Cell to, bool tunnel)
+    private void SetTunnel(IntVector2 cell, IntVector2 to, bool tunnel)
     {
-        if ((to.X - cell.X) == 0)
+        if ((to.x - cell.x) == 0)
         {
-            vertPasses[cell.X, Mathf.Min(cell.Y, to.Y)] = tunnel;
-            Texture.SetPixel(2 * cell.X + 1, 2 * Mathf.Min(cell.Y, to.Y) + 2, tunnel ? Color.blue : Color.black);
+            vertPasses[cell.x, Mathf.Min(cell.y, to.y)] = tunnel;
+            Texture.SetPixel(2 * cell.x + 1, 2 * Mathf.Min(cell.y, to.y) + 2, tunnel ? Color.blue : Color.black);
             return;
         }
 
-        if ((to.Y - cell.Y) == 0)
+        if ((to.y - cell.y) == 0)
         {
-            horPasses[Mathf.Min(cell.X, to.X), cell.Y] = tunnel;
-            Texture.SetPixel(2 * Mathf.Min(cell.X, to.X) + 2, 2 * cell.Y + 1, tunnel ? Color.blue : Color.black);
+            horPasses[Mathf.Min(cell.x, to.x), cell.y] = tunnel;
+            Texture.SetPixel(2 * Mathf.Min(cell.x, to.x) + 2, 2 * cell.y + 1, tunnel ? Color.blue : Color.black);
         }
     }
 

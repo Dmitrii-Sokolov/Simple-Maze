@@ -2,49 +2,51 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public struct IntVector2
+{
+    public int x, y;
+
+    public IntVector2(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+
+    public static IntVector2 operator +(IntVector2 a, IntVector2 b)
+    {
+        return new IntVector2(a.x + b.x, a.y + b.y);
+    }
+
+    public static IntVector2 operator +(IntVector2 a, Vector2 b)
+    {
+        return new IntVector2(a.x + (int)b.x, a.y + (int)b.y);
+    }
+
+    public static IntVector2 operator -(IntVector2 a, IntVector2 b)
+    {
+        return new IntVector2(a.x - b.x, a.y - b.y);
+    }
+
+    public static IntVector2 operator -(IntVector2 a, Vector2 b)
+    {
+        return new IntVector2(a.x - (int)b.x, a.y - (int)b.y);
+    }
+
+    public static IntVector2 operator *(IntVector2 a, int b)
+    {
+        return new IntVector2(a.x * b, a.y * b);
+    }
+}
+
 public abstract class CellMaze
 {
-    protected class Cell
+    protected static List<IntVector2> shifts = new List<IntVector2>()
     {
-        private class Shift
-        {
-            public readonly int Dx;
-            public readonly int Dy;
-            public Shift(int dx, int dy)
-            {
-                Dx = dx;
-                Dy = dy;
-            }
-        }
-
-        private static List<Shift> shifts = new List<Shift>()
-        {
-            new Shift(-1, 0),
-            new Shift(1, 0),
-            new Shift(0, -1),
-            new Shift(0, 1),
-        };
-
-        public readonly int X;
-        public readonly int Y;
-
-        public Cell(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public List<Cell> AdjQuad
-        {
-            get
-            {
-                var outList = new List<Cell>();
-                foreach (var item in shifts)
-                    outList.Add(new Cell(X + item.Dx, Y + item.Dy));
-                return outList;
-            }
-        }
-    }
+        new IntVector2(-1, 0),
+        new IntVector2(1, 0),
+        new IntVector2(0, -1),
+        new IntVector2(0, 1)
+    };
 
     public Texture2D Texture { protected set; get; }
     public abstract int OutTextureWidth { get; }
@@ -52,10 +54,10 @@ public abstract class CellMaze
     public int Width { private set; get; }
     public int Height { private set; get; }
 
-    protected abstract Cell CurrentCell { set; get; }
+    protected abstract IntVector2 CurrentCell { set; get; }
 
-    protected Cell currentCell = null;
-    protected Stack<Cell> MazeTrace = new Stack<Cell>();
+    protected IntVector2 currentCell;
+    protected Stack<IntVector2> MazeTrace = new Stack<IntVector2>();
 
     protected bool[,] passes;
 
@@ -80,7 +82,7 @@ public abstract class CellMaze
                 passes[i, n] = false;
 
         MazeTrace.Clear();
-        CurrentCell = new Cell(Random.Range(0, Width), Random.Range(0, Height));
+        CurrentCell = new IntVector2(Random.Range(0, Width), Random.Range(0, Height));
     }
 
     public void Generate()
@@ -90,13 +92,13 @@ public abstract class CellMaze
 
     public abstract bool NextStep();
 
-    protected bool InMaze(Cell cell)
+    protected bool InMaze(IntVector2 cell)
     {
-        return ((cell.X < Width) && (cell.X >= 0) && (cell.Y < Height) && (cell.Y >= 0));
+        return ((cell.x < Width) && (cell.x >= 0) && (cell.y < Height) && (cell.y >= 0));
     }
 
-    protected bool GetPass(Cell cell)
+    protected bool GetPass(IntVector2 cell)
     {
-        return passes[cell.X, cell.Y];
+        return passes[cell.x, cell.y];
     }
 }
