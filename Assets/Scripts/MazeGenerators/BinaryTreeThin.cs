@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//https://habrahabr.ru/post/320140/
 public class BinaryTreeThin : ThinWalledMaze
 {
     private static List<IntVector2> shiftsSimple = new List<IntVector2>()
     {
-        new IntVector2(1, 0),
-        new IntVector2(0, 1),
+        IntVector2.East, IntVector2.North
     };
 
     public BinaryTreeThin() { }

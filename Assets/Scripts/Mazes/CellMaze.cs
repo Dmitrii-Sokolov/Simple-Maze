@@ -5,6 +5,10 @@ using UnityEngine;
 public struct IntVector2
 {
     public int x, y;
+    public static readonly IntVector2 East = new IntVector2(1, 0);
+    public static readonly IntVector2 West = new IntVector2(-1, 0);
+    public static readonly IntVector2 North = new IntVector2(0, 1);
+    public static readonly IntVector2 South = new IntVector2(0, -1);
 
     public IntVector2(int x, int y)
     {
@@ -42,10 +46,7 @@ public abstract class CellMaze
 {
     protected static List<IntVector2> shifts = new List<IntVector2>()
     {
-        new IntVector2(1, 0),
-        new IntVector2(0, 1),
-        new IntVector2(-1, 0),
-        new IntVector2(0, -1)
+        IntVector2.East, IntVector2.North, IntVector2.West, IntVector2.South
     };
 
     public Texture2D Texture { protected set; get; }
