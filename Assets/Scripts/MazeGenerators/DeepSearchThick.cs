@@ -10,6 +10,14 @@ public class DeepSearchThick : ThickWalledMaze
         SetSize(width, height);
     }
 
+    protected Stack<IntVector2> MazeTrace = new Stack<IntVector2>();
+
+    public override void Clear()
+    {
+        base.Clear();
+        MazeTrace.Clear();
+    }
+
     public override bool NextStep()
     {
         SetPass(CurrentCell, true);

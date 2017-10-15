@@ -18,7 +18,7 @@ public class TextureGenerator : MonoBehaviour
 
     public enum GenType
     {
-        SetSidewinder, SetBinary, SetThin, SetThick, Maze, MazeStep, AutoMaze, AutoMazeStop, MazeClear
+        SetHuntAndKill, SetSidewinder, SetBinary, SetThin, SetThick, Maze, MazeStep, AutoMaze, AutoMazeStop, MazeClear
     }
 
     private float currentTime = 0;
@@ -65,6 +65,9 @@ public class TextureGenerator : MonoBehaviour
         switch (type)
         {
             default:
+            case GenType.SetHuntAndKill:
+                Maze = new HuntAndKillThin(Size, Size);
+                break;
             case GenType.SetSidewinder:
                 Maze = new SidewinderThin(Size, Size);
                 break;

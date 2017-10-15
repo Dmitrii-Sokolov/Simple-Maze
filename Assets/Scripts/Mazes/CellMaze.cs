@@ -58,7 +58,6 @@ public abstract class CellMaze
     protected abstract IntVector2 CurrentCell { set; get; }
 
     protected IntVector2 currentCell;
-    protected Stack<IntVector2> MazeTrace = new Stack<IntVector2>();
 
     protected bool[,] passes;
 
@@ -82,7 +81,6 @@ public abstract class CellMaze
             for (int n = 0; n < Height; n++)
                 passes[i, n] = false;
 
-        MazeTrace.Clear();
         CurrentCell = new IntVector2(Random.Range(0, Width), Random.Range(0, Height));
     }
 
