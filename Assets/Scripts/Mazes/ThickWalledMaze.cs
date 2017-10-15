@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ThickWalledMaze : CellMaze
+public abstract class ThickWalledMaze : CellMaze
 {
     protected override IntVector2 CurrentCell
     {
@@ -44,38 +44,9 @@ public class ThickWalledMaze : CellMaze
                 nodeDegrees[i, n] = 0;
     }
 
-    public override bool NextStep()
-    {
-        SetPass(CurrentCell, true);
-        var choices = new List<IntVector2>();
+    public abstract override bool NextStep();
 
-        foreach (var item in shifts)
-        {
-            var adj = CurrentCell + item;
-            if (InMaze(adj))
-                if (!GetPass(adj))
-                    if (GetDegree(adj) <= 1)
-                        choices.Add(adj);
-        }
-
-        if (choices.Count == 0)
-        {
-            if (MazeTrace.Count == 0)
-                return false;
-            else
-                CurrentCell = MazeTrace.Pop();
-        }
-        else
-        {
-            var index = Random.Range(0, choices.Count);
-            MazeTrace.Push(CurrentCell);
-            CurrentCell = choices[index];
-        }
-
-        return true;
-    }
-
-    private void SetPass(IntVector2 cell, bool pass)
+    protected void SetPass(IntVector2 cell, bool pass)
     {
         if (InMaze(cell))
             if (passes[cell.x, cell.y] != pass)
@@ -91,7 +62,7 @@ public class ThickWalledMaze : CellMaze
             }
     }
 
-    private sbyte GetDegree(IntVector2 cell)
+    protected sbyte GetDegree(IntVector2 cell)
     {
         return nodeDegrees[cell.x, cell.y];
     }

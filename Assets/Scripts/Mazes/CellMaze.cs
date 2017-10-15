@@ -42,10 +42,10 @@ public abstract class CellMaze
 {
     protected static List<IntVector2> shifts = new List<IntVector2>()
     {
-        new IntVector2(-1, 0),
         new IntVector2(1, 0),
-        new IntVector2(0, -1),
-        new IntVector2(0, 1)
+        new IntVector2(0, 1),
+        new IntVector2(-1, 0),
+        new IntVector2(0, -1)
     };
 
     public Texture2D Texture { protected set; get; }

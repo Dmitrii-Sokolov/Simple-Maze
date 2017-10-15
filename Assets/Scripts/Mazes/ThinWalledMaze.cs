@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ThinWalledMaze : CellMaze
+public abstract class ThinWalledMaze : CellMaze
 {
     protected override IntVector2 CurrentCell
     {
@@ -60,38 +60,9 @@ public class ThinWalledMaze : CellMaze
                 horPasses[i, n] = false;
     }
 
-    public override bool NextStep()
-    {
-        SetPass(CurrentCell, true);
-        var choices = new List<IntVector2>();
+    public abstract override bool NextStep();
 
-        foreach (var item in shifts)
-        {
-            var adj = CurrentCell + item;
-            if (InMaze(adj))
-                if (!GetPass(adj))
-                    choices.Add(adj);
-        }
-
-        if (choices.Count == 0)
-        {
-            if (MazeTrace.Count == 0)
-                return false;
-            else
-                CurrentCell = MazeTrace.Pop();
-        }
-        else
-        {
-            var index = Random.Range(0, choices.Count);
-            MazeTrace.Push(CurrentCell);
-            SetTunnel(CurrentCell, choices[index], true);
-            CurrentCell = choices[index];
-        }
-
-        return true;
-    }
-
-    private void SetPass(IntVector2 cell, bool pass)
+    protected void SetPass(IntVector2 cell, bool pass)
     {
         if (InMaze(cell))
             if (passes[cell.x, cell.y] != pass)
@@ -101,7 +72,7 @@ public class ThinWalledMaze : CellMaze
             }
     }
 
-    private void SetTunnel(IntVector2 cell, IntVector2 to, bool tunnel)
+    protected void SetTunnel(IntVector2 cell, IntVector2 to, bool tunnel)
     {
         if ((to.x - cell.x) == 0)
         {
@@ -117,14 +88,14 @@ public class ThinWalledMaze : CellMaze
         }
     }
 
-    //private bool GetTunnel(Cell cell, Cell to)
-    //{
-    //    if ((to.X - cell.X) == 0)
-    //        return vertPasses[cell.X, Mathf.Min(cell.Y, to.Y)];
+    protected bool GetTunnel(IntVector2 cell, IntVector2 to)
+    {
+        if ((to.x - cell.x) == 0)
+            return vertPasses[cell.x, Mathf.Min(cell.y, to.y)];
 
-    //    if ((to.Y - cell.Y) == 0)
-    //        return horPasses[Mathf.Min(cell.X, to.X), cell.Y];
+        if ((to.y - cell.y) == 0)
+            return horPasses[Mathf.Min(cell.x, to.x), cell.y];
 
-    //    return false;
-    //}
+        return false;
+    }
 }
