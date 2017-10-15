@@ -24,13 +24,13 @@ public class ThinWalledMaze : CellMaze
         {
             if (null != currentCell)
                 if (InMaze(currentCell))
-                    colorMap[(2 * currentCell.X + 1) + (2 * currentCell.Y + 1) * OutTextureWidth] = GetPass(currentCell) ? Color.blue : Color.black;
+                    Texture.SetPixel(2 * currentCell.X + 1, 2 * currentCell.Y + 1, GetPass(currentCell) ? Color.blue : Color.black);
 
             currentCell = value;
 
             if (null != currentCell)
                 if (InMaze(currentCell))
-                    colorMap[(2 * currentCell.X + 1) + (2 * currentCell.Y + 1) * OutTextureWidth] = Color.red;
+                    Texture.SetPixel(2 * currentCell.X + 1, 2 * currentCell.Y + 1, Color.red);
         }
         get
         {
@@ -93,7 +93,7 @@ public class ThinWalledMaze : CellMaze
             if (passes[cell.X, cell.Y] != pass)
             {
                 passes[cell.X, cell.Y] = pass;
-                colorMap[(2 * cell.X + 1) + (2 * cell.Y + 1) * OutTextureWidth] = pass ? Color.blue : Color.black;
+                Texture.SetPixel(2 * cell.X + 1, 2 * cell.Y + 1, pass ? Color.blue : Color.black);
             }
     }
 
@@ -102,7 +102,7 @@ public class ThinWalledMaze : CellMaze
         if ((to.X - cell.X) == 0)
         {
             vertPasses[cell.X, Mathf.Min(cell.Y, to.Y)] = tunnel;
-            colorMap[(2 * cell.X + 1) + (2 * Mathf.Min(cell.Y, to.Y) + 2) * OutTextureWidth] = tunnel ? Color.blue : Color.black;
+            Texture.SetPixel(2 * cell.X + 1, 2 * Mathf.Min(cell.Y, to.Y) + 2, tunnel ? Color.blue : Color.black);
             return;
         }
 
@@ -110,7 +110,7 @@ public class ThinWalledMaze : CellMaze
         if ((to.Y - cell.Y) == 0)
         {
             horPasses[Mathf.Min(cell.X, to.X), cell.Y] = tunnel;
-            colorMap[(2 * Mathf.Min(cell.X, to.X) + 2) + (2 * cell.Y + 1) * OutTextureWidth] = tunnel ? Color.blue : Color.black;
+            Texture.SetPixel(2 * Mathf.Min(cell.X, to.X) + 2, 2 * cell.Y + 1, tunnel ? Color.blue : Color.black);
         }
     }
 

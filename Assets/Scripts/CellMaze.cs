@@ -55,15 +55,19 @@ public abstract class CellMaze
 
     public abstract int OutTextureWidth { get; }
     public abstract int OutTextureHeight { get; }
-    protected Color[] colorMap;
+    protected Texture2D texture;
 
     public abstract CellMaze SetSize(int width, int height);
 
-    public Color[] ToColor
+    public Texture2D Texture
     {
+        private set
+        {
+            texture = value;
+        }
         get
         {
-            return colorMap;
+            return texture;
         }
     }
 
@@ -86,15 +90,17 @@ public abstract class CellMaze
 
     public virtual void Clear()
     {
-        colorMap = new Color[OutTextureWidth * OutTextureHeight];
-        for (int i = 0; i < OutTextureWidth * OutTextureHeight; i++)
-            colorMap[i] = Color.black;
+        Texture = new Texture2D(OutTextureWidth, OutTextureHeight, TextureFormat.ARGB32, false);
+        Texture.filterMode = FilterMode.Point;
+        for (int i = 0; i < OutTextureWidth; i++)
+            for (int n = 0; n < OutTextureHeight; n++)
+                Texture.SetPixel(i, n, Color.black);
 
-        CurrentCell = new Cell(Random.Range(0, Width), Random.Range(0, Height));
         MazeTrace.Clear();
         for (int i = 0; i < Width; i++)
             for (int n = 0; n < Height; n++)
                 passes[i, n] = false;
+        CurrentCell = new Cell(Random.Range(0, Width), Random.Range(0, Height));
     }
 
     public abstract bool NextStep();

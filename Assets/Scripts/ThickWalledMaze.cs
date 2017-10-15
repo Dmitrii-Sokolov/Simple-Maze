@@ -21,13 +21,13 @@ public class ThickWalledMaze : CellMaze
         {
             if (null != currentCell)
                 if (InMaze(currentCell))
-                    colorMap[currentCell.X + currentCell.Y * OutTextureWidth] = GetPass(currentCell) ? Color.blue : Color.black;
+                    Texture.SetPixel(currentCell.X, currentCell.Y, GetPass(currentCell) ? Color.blue : Color.black);
 
             currentCell = value;
 
             if (null != currentCell)
                 if (InMaze(currentCell))
-                    colorMap[currentCell.X + currentCell.Y * OutTextureWidth] = Color.red;
+                    Texture.SetPixel(currentCell.X, currentCell.Y, Color.red);
         }
         get
         {
@@ -93,7 +93,7 @@ public class ThickWalledMaze : CellMaze
             if (passes[cell.X, cell.Y] != pass)
             {
                 passes[cell.X, cell.Y] = pass;
-                colorMap[cell.X + cell.Y * OutTextureWidth] = pass ? Color.blue : Color.black;
+                Texture.SetPixel(cell.X, cell.Y, pass ? Color.blue : Color.black);
                 foreach (var item in cell.AdjQuad)
                     if (InMaze(item))
                         DegreeIncrease(item, pass ? (sbyte) 1 : (sbyte) -1);

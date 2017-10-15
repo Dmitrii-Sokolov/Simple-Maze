@@ -32,7 +32,6 @@ public class TextureGenerator : MonoBehaviour
     private bool isAutoMaze = false;
     private bool NeedRedraw = false;
     private CellMaze Maze;
-    private Color[] ColorMap;
 
     private int size;
     private int Size
@@ -41,7 +40,7 @@ public class TextureGenerator : MonoBehaviour
         {
             size = value;
             Maze = Maze.SetSize(Size, Size);
-            outTexture.Resize(Maze.OutTextureWidth, Maze.OutTextureHeight);
+            outTexture = Maze.Texture;
             Command(lastCommand);
         }
         get
@@ -53,8 +52,6 @@ public class TextureGenerator : MonoBehaviour
     void Start()
     {
         Maze = new ThinWalledMaze(1, 1);
-        outTexture = new Texture2D(Maze.OutTextureWidth, Maze.OutTextureHeight, TextureFormat.ARGB32, false);
-        outTexture.filterMode = FilterMode.Point;
         Size = 30;
 
         if (null != StepInput)
@@ -74,11 +71,9 @@ public class TextureGenerator : MonoBehaviour
             default:
             case GenType.SetThick:
                 Maze = new ThickWalledMaze(Size, Size);
-                outTexture.Resize(Maze.OutTextureWidth, Maze.OutTextureHeight);
                 break;
             case GenType.SetThin:
                 Maze = new ThinWalledMaze(Size, Size);
-                outTexture.Resize(Maze.OutTextureWidth, Maze.OutTextureHeight);
                 break;
             case GenType.Maze:
                 Maze.Generate();
@@ -121,7 +116,7 @@ public class TextureGenerator : MonoBehaviour
 
         if (NeedRedraw)
         {
-            ColorMap = Maze.ToColor;
+            outTexture = Maze.Texture;
             Visualize();
             NeedRedraw = false;
         }
@@ -130,6 +125,7 @@ public class TextureGenerator : MonoBehaviour
 
     private void Visualize()
     {
+        //Color[] ColorMap = new Color[Size * Size];
         //for (int i = 0; i < Size * Size; i++)
         //    ColorMap[i] = Color.HSVToRGB((i / Size) / (float)Size, (i % Size) / (float)Size, 1f);
         //for (int i = 0; i < Size * Size; i++)
@@ -141,8 +137,8 @@ public class TextureGenerator : MonoBehaviour
         //var hue = UnityEngine.Random.value;
         //for (int i = 0; i < Size * Size; i++)
         //    ColorMap[i] = Color.HSVToRGB(hue, (i / Size) / (float)Size, (i % Size) / (float)Size);
+        //outTexture.SetPixels(ColorMap);
 
-        outTexture.SetPixels(ColorMap);
         outTexture.Apply();
         targetImage.sprite = Sprite.Create(outTexture, new Rect(0, 0, Maze.OutTextureWidth, Maze.OutTextureHeight), new Vector2(0.5f, 0.5f));
     }
