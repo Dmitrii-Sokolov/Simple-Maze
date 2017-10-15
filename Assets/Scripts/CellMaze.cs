@@ -46,46 +46,24 @@ public abstract class CellMaze
         }
     }
 
-    protected readonly int Width;
-    protected readonly int Height;
-    protected bool[,] passes;
-    protected Cell currentCell = null;
-    protected abstract Cell CurrentCell { set; get; }
-    protected Stack<Cell> MazeTrace = new Stack<Cell>();
-
+    public Texture2D Texture { protected set; get; }
     public abstract int OutTextureWidth { get; }
     public abstract int OutTextureHeight { get; }
-    protected Texture2D texture;
+    public int Width { private set; get; }
+    public int Height { private set; get; }
 
-    public abstract CellMaze SetSize(int width, int height);
+    protected abstract Cell CurrentCell { set; get; }
 
-    public Texture2D Texture
-    {
-        private set
-        {
-            texture = value;
-        }
-        get
-        {
-            return texture;
-        }
-    }
+    protected Cell currentCell = null;
+    protected Stack<Cell> MazeTrace = new Stack<Cell>();
 
-    protected bool InMaze(Cell cell)
-    {
-        return ((cell.X < Width) && (cell.X >= 0) && (cell.Y < Height) && (cell.Y >= 0));
-    }
+    protected bool[,] passes;
 
-    public CellMaze(int width, int height)
+    public virtual void SetSize(int width, int height)
     {
         Width = width;
         Height = height;
-        passes = new bool[Width, Height];
-    }
-
-    public void Generate()
-    {
-        while (NextStep());
+        Clear();
     }
 
     public virtual void Clear()
@@ -96,12 +74,29 @@ public abstract class CellMaze
             for (int n = 0; n < OutTextureHeight; n++)
                 Texture.SetPixel(i, n, Color.black);
 
-        MazeTrace.Clear();
+        passes = new bool[Width, Height];
         for (int i = 0; i < Width; i++)
             for (int n = 0; n < Height; n++)
                 passes[i, n] = false;
+
+        MazeTrace.Clear();
         CurrentCell = new Cell(Random.Range(0, Width), Random.Range(0, Height));
     }
 
+    public void Generate()
+    {
+        while (NextStep());
+    }
+
     public abstract bool NextStep();
+
+    protected bool InMaze(Cell cell)
+    {
+        return ((cell.X < Width) && (cell.X >= 0) && (cell.Y < Height) && (cell.Y >= 0));
+    }
+
+    protected bool GetPass(Cell cell)
+    {
+        return passes[cell.X, cell.Y];
+    }
 }

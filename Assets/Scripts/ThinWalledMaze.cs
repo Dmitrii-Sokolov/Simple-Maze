@@ -4,20 +4,6 @@ using UnityEngine;
 
 public class ThinWalledMaze : CellMaze
 {
-    private bool[,] vertPasses;
-    private bool[,] horPasses;
-
-    private readonly int texWidth;
-    private readonly int texHeight;
-
-    public override int OutTextureWidth { get { return texWidth; } }
-    public override int OutTextureHeight { get { return texHeight; } }
-
-    public override CellMaze SetSize(int width, int height)
-    {
-        return new ThinWalledMaze(width, height);
-    }
-
     protected override Cell CurrentCell
     {
         set
@@ -38,22 +24,39 @@ public class ThinWalledMaze : CellMaze
         }
     }
 
-    public ThinWalledMaze(int width, int height) : base(width, height)
+    public override int OutTextureWidth { get { return texWidth; } }
+    public override int OutTextureHeight { get { return texHeight; } }
+
+    private bool[,] vertPasses;
+    private bool[,] horPasses;
+
+    private int texWidth;
+    private int texHeight;
+
+    public ThinWalledMaze() { }
+
+    public ThinWalledMaze(int width, int height)
     {
-        vertPasses = new bool[Width, Height - 1];
-        horPasses = new bool[Width - 1, Height];
-        texHeight = 2 * Height + 1;
-        texWidth = 2 * Width + 1;
-        Clear();
+        SetSize(width, height);
+    }
+
+    public override void SetSize(int width, int height)
+    {
+        texHeight = 2 * height + 1;
+        texWidth = 2 * width + 1;
+        base.SetSize(width, height);
     }
 
     public override void Clear()
     {
         base.Clear();
+
+        vertPasses = new bool[Width, Height - 1];
         for (int i = 0; i < Width; i++)
             for (int n = 0; n < Height - 1; n++)
                 vertPasses[i, n] = false;
 
+        horPasses = new bool[Width - 1, Height];
         for (int i = 0; i < Width - 1; i++)
             for (int n = 0; n < Height; n++)
                 horPasses[i, n] = false;
@@ -106,7 +109,6 @@ public class ThinWalledMaze : CellMaze
             return;
         }
 
-
         if ((to.Y - cell.Y) == 0)
         {
             horPasses[Mathf.Min(cell.X, to.X), cell.Y] = tunnel;
@@ -114,19 +116,14 @@ public class ThinWalledMaze : CellMaze
         }
     }
 
-    private bool GetTunnel(Cell cell, Cell to)
-    {
-        if ((to.X - cell.X) == 0)
-            return vertPasses[cell.X, Mathf.Min(cell.Y, to.Y)];
+    //private bool GetTunnel(Cell cell, Cell to)
+    //{
+    //    if ((to.X - cell.X) == 0)
+    //        return vertPasses[cell.X, Mathf.Min(cell.Y, to.Y)];
 
-        if ((to.Y - cell.Y) == 0)
-            return horPasses[Mathf.Min(cell.X, to.X), cell.Y];
+    //    if ((to.Y - cell.Y) == 0)
+    //        return horPasses[Mathf.Min(cell.X, to.X), cell.Y];
 
-        return false;
-    }
-
-    private bool GetPass(Cell cell)
-    {
-        return passes[cell.X, cell.Y];
-    }
+    //    return false;
+    //}
 }

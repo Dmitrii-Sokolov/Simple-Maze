@@ -4,17 +4,6 @@ using UnityEngine;
 
 public class ThickWalledMaze : CellMaze
 {
-    private sbyte[,] nodeDegrees;
-
-    public override int OutTextureWidth { get { return Width; } }
-    public override int OutTextureHeight { get { return Height; } }
-
-    public override CellMaze SetSize(int width, int height)
-    {
-        return new ThickWalledMaze(width, height);
-    }
-
-
     protected override Cell CurrentCell
     {
         set
@@ -35,15 +24,23 @@ public class ThickWalledMaze : CellMaze
         }
     }
 
-    public ThickWalledMaze(int width, int height) : base(width, height)
+    public override int OutTextureWidth { get { return Width; } }
+    public override int OutTextureHeight { get { return Height; } }
+
+    private sbyte[,] nodeDegrees;
+
+    public ThickWalledMaze() { }
+
+    public ThickWalledMaze(int width, int height)
     {
-        nodeDegrees = new sbyte[Width, Height];
-        Clear();
+        SetSize(width, height);
     }
 
     public override void Clear()
     {
         base.Clear();
+
+        nodeDegrees = new sbyte[Width, Height];
         for (int i = 0; i < Width; i++)
             for (int n = 0; n < Height; n++)
                 nodeDegrees[i, n] = 0;
@@ -77,16 +74,6 @@ public class ThickWalledMaze : CellMaze
         return true;
     }
 
-    private sbyte GetDegree(Cell cell)
-    {
-        return nodeDegrees[cell.X, cell.Y];
-    }
-
-    private void DegreeIncrease(Cell cell, sbyte count)
-    {
-        nodeDegrees[cell.X, cell.Y] += count;
-    }
-
     private void SetPass(Cell cell, bool pass)
     {
         if (InMaze(cell))
@@ -100,8 +87,13 @@ public class ThickWalledMaze : CellMaze
             }
     }
 
-    private bool GetPass(Cell cell)
+    private sbyte GetDegree(Cell cell)
     {
-        return passes[cell.X, cell.Y];
+        return nodeDegrees[cell.X, cell.Y];
+    }
+
+    private void DegreeIncrease(Cell cell, sbyte count)
+    {
+        nodeDegrees[cell.X, cell.Y] += count;
     }
 }

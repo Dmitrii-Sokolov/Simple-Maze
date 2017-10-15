@@ -15,9 +15,6 @@ public class TextureGenerator : MonoBehaviour
     [SerializeField]
     private Image targetImage;
 
-    [SerializeField]
-    private Texture2D outTexture;
-
 
     public enum GenType
     {
@@ -39,8 +36,7 @@ public class TextureGenerator : MonoBehaviour
         set
         {
             size = value;
-            Maze = Maze.SetSize(Size, Size);
-            outTexture = Maze.Texture;
+            Maze.SetSize(Size, Size);
             Command(lastCommand);
         }
         get
@@ -51,7 +47,7 @@ public class TextureGenerator : MonoBehaviour
 
     void Start()
     {
-        Maze = new ThinWalledMaze(1, 1);
+        Maze = new ThinWalledMaze();
         Size = 30;
 
         if (null != StepInput)
@@ -116,7 +112,6 @@ public class TextureGenerator : MonoBehaviour
 
         if (NeedRedraw)
         {
-            outTexture = Maze.Texture;
             Visualize();
             NeedRedraw = false;
         }
@@ -125,7 +120,8 @@ public class TextureGenerator : MonoBehaviour
 
     private void Visualize()
     {
-        //Color[] ColorMap = new Color[Size * Size];
+        //var ColorMap = new Color[Size * Size];
+        //var outTexture = new Texture2D(Size, Size, TextureFormat.ARGB32, false);
         //for (int i = 0; i < Size * Size; i++)
         //    ColorMap[i] = Color.HSVToRGB((i / Size) / (float)Size, (i % Size) / (float)Size, 1f);
         //for (int i = 0; i < Size * Size; i++)
@@ -138,8 +134,9 @@ public class TextureGenerator : MonoBehaviour
         //for (int i = 0; i < Size * Size; i++)
         //    ColorMap[i] = Color.HSVToRGB(hue, (i / Size) / (float)Size, (i % Size) / (float)Size);
         //outTexture.SetPixels(ColorMap);
+        //outTexture.Apply();
 
-        outTexture.Apply();
-        targetImage.sprite = Sprite.Create(outTexture, new Rect(0, 0, Maze.OutTextureWidth, Maze.OutTextureHeight), new Vector2(0.5f, 0.5f));
+        Maze.Texture.Apply();
+        targetImage.sprite = Sprite.Create(Maze.Texture, new Rect(0, 0, Maze.OutTextureWidth, Maze.OutTextureHeight), new Vector2(0.5f, 0.5f));
     }
 }
