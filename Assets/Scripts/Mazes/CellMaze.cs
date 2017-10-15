@@ -49,15 +49,34 @@ public abstract class CellMaze
         IntVector2.East, IntVector2.North, IntVector2.West, IntVector2.South
     };
 
-    public Texture2D Texture { protected set; get; }
-    public abstract int OutTextureWidth { get; }
-    public abstract int OutTextureHeight { get; }
-    public int Width { private set; get; }
-    public int Height { private set; get; }
-
-    protected abstract IntVector2 CurrentCell { set; get; }
+    protected static Color Rig = Color.red;
+    protected static Color Full = Color.black;
+    protected static Color Empty = Color.blue;
 
     protected IntVector2 currentCell;
+    protected virtual IntVector2 CurrentCell
+    {
+        set
+        {
+            if (InMaze(currentCell))
+                PaintCell(currentCell);
+
+            currentCell = value;
+
+            if (InMaze(currentCell))
+                PaintRig(currentCell);
+        }
+        get
+        {
+            return currentCell;
+        }
+    }
+
+    public Texture2D Texture { protected set; get; }
+    public int Width { private set; get; }
+    public int Height { private set; get; }
+    public virtual int OutTextureWidth { get { return Width; } }
+    public virtual int OutTextureHeight { get { return Height; } }
 
     protected bool[,] passes;
 
@@ -94,6 +113,25 @@ public abstract class CellMaze
     protected bool InMaze(IntVector2 cell)
     {
         return ((cell.x < Width) && (cell.x >= 0) && (cell.y < Height) && (cell.y >= 0));
+    }
+
+    protected virtual void SetPass(IntVector2 cell, bool pass)
+    {
+        if (passes[cell.x, cell.y] != pass)
+        {
+            passes[cell.x, cell.y] = pass;
+            PaintCell(cell);
+        }
+    }
+
+    protected virtual void PaintCell(IntVector2 cell)
+    {
+        Texture.SetPixel(cell.x, cell.y, GetPass(cell) ? Empty : Full);
+    }
+
+    protected virtual void PaintRig(IntVector2 cell)
+    {
+        Texture.SetPixel(cell.x, cell.y, Rig);
     }
 
     protected bool GetPass(IntVector2 cell)

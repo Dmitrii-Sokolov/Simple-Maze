@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/320140/
-public class SidewinderThin : ThinWalledMaze
+public class SidewinderThin : WalledMaze
 {
 
     private const float horChance = 0.6f;

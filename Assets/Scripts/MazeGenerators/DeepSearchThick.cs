@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeepSearchThick : ThickWalledMaze
+public class DeepSearchThick : CellMaze
 {
     public DeepSearchThick() { }
     public DeepSearchThick(int width, int height)
@@ -10,17 +10,33 @@ public class DeepSearchThick : ThickWalledMaze
         SetSize(width, height);
     }
 
-    protected Stack<IntVector2> MazeTrace = new Stack<IntVector2>();
+    private Stack<IntVector2> MazeTrace = new Stack<IntVector2>();
+    private sbyte[,] nodeDegrees;
 
     public override void Clear()
     {
         base.Clear();
         MazeTrace.Clear();
-    }
 
+        nodeDegrees = new sbyte[Width, Height];
+        for (int i = 0; i < Width; i++)
+            for (int n = 0; n < Height; n++)
+                nodeDegrees[i, n] = 0;
+    }
+  
     public override bool NextStep()
     {
-        SetPass(CurrentCell, true);
+        if (!GetPass(CurrentCell))
+        {
+            SetPass(CurrentCell, true);
+            foreach (var item in shifts)
+            {
+                var adj = CurrentCell + item;
+                if (InMaze(adj))
+                    DegreeIncrease(adj, 1);
+            }
+        }
+
         var choices = new List<IntVector2>();
 
         foreach (var item in shifts)
@@ -47,5 +63,15 @@ public class DeepSearchThick : ThickWalledMaze
         }
 
         return true;
+    }
+
+    private sbyte GetDegree(IntVector2 cell)
+    {
+        return nodeDegrees[cell.x, cell.y];
+    }
+
+    private void DegreeIncrease(IntVector2 cell, sbyte count)
+    {
+        nodeDegrees[cell.x, cell.y] += count;
     }
 }

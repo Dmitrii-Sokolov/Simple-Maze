@@ -2,26 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ThinWalledMaze : CellMaze
+public abstract class WalledMaze : CellMaze
 {
-    protected override IntVector2 CurrentCell
-    {
-        set
-        {
-            if (InMaze(currentCell))
-                Texture.SetPixel(2 * currentCell.x + 1, 2 * currentCell.y + 1, GetPass(currentCell) ? Color.blue : Color.black);
-
-            currentCell = value;
-
-            if (InMaze(currentCell))
-                Texture.SetPixel(2 * currentCell.x + 1, 2 * currentCell.y + 1, Color.red);
-        }
-        get
-        {
-            return currentCell;
-        }
-    }
-
     public override int OutTextureWidth { get { return texWidth; } }
     public override int OutTextureHeight { get { return texHeight; } }
 
@@ -31,9 +13,9 @@ public abstract class ThinWalledMaze : CellMaze
     private int texWidth;
     private int texHeight;
 
-    public ThinWalledMaze() { }
+    public WalledMaze() { }
 
-    public ThinWalledMaze(int width, int height)
+    public WalledMaze(int width, int height)
     {
         SetSize(width, height);
     }
@@ -62,14 +44,14 @@ public abstract class ThinWalledMaze : CellMaze
 
     public abstract override bool NextStep();
 
-    protected void SetPass(IntVector2 cell, bool pass)
+    protected override void PaintCell(IntVector2 cell)
     {
-        if (InMaze(cell))
-            if (passes[cell.x, cell.y] != pass)
-            {
-                passes[cell.x, cell.y] = pass;
-                Texture.SetPixel(2 * cell.x + 1, 2 * cell.y + 1, pass ? Color.blue : Color.black);
-            }
+        Texture.SetPixel(2 * cell.x + 1, 2 * cell.y + 1, GetPass(cell) ? Empty : Full);
+    }
+
+    protected override void PaintRig(IntVector2 cell)
+    {
+        Texture.SetPixel(2 * cell.x + 1, 2 * cell.y + 1, Rig);
     }
 
     protected void SetTunnel(IntVector2 cell, IntVector2 to, bool tunnel)
@@ -77,14 +59,14 @@ public abstract class ThinWalledMaze : CellMaze
         if ((to.x - cell.x) == 0)
         {
             vertPasses[cell.x, Mathf.Min(cell.y, to.y)] = tunnel;
-            Texture.SetPixel(2 * cell.x + 1, 2 * Mathf.Min(cell.y, to.y) + 2, tunnel ? Color.blue : Color.black);
+            Texture.SetPixel(2 * cell.x + 1, 2 * Mathf.Min(cell.y, to.y) + 2, tunnel ? Empty : Full);
             return;
         }
 
         if ((to.y - cell.y) == 0)
         {
             horPasses[Mathf.Min(cell.x, to.x), cell.y] = tunnel;
-            Texture.SetPixel(2 * Mathf.Min(cell.x, to.x) + 2, 2 * cell.y + 1, tunnel ? Color.blue : Color.black);
+            Texture.SetPixel(2 * Mathf.Min(cell.x, to.x) + 2, 2 * cell.y + 1, tunnel ? Empty : Full);
         }
     }
 

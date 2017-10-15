@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/320140/
-public class BinaryTreeThin : ThinWalledMaze
+public class BinaryTreeThin : WalledMaze
 {
     private static List<IntVector2> shiftsSimple = new List<IntVector2>()
     {

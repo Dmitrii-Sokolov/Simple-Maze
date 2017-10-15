@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeepSearchThin : ThinWalledMaze
+public class DeepSearchThin : WalledMaze
 {
     public DeepSearchThin() { }
     public DeepSearchThin(int width, int height)
@@ -10,7 +10,7 @@ public class DeepSearchThin : ThinWalledMaze
         SetSize(width, height);
     }
 
-    protected Stack<IntVector2> MazeTrace = new Stack<IntVector2>();
+    private Stack<IntVector2> MazeTrace = new Stack<IntVector2>();
 
     public override void Clear()
     {
