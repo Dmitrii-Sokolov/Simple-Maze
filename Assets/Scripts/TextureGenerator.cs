@@ -21,7 +21,7 @@ public class TextureGenerator : MonoBehaviour
 
     public enum GenType
     {
-        Maze, MazeStep, AutoMaze, AutoMazeStop, MazeClear
+        SetThin, SetThick, Maze, MazeStep, AutoMaze, AutoMazeStop, MazeClear
     }
 
     private float currentTime = 0;
@@ -31,7 +31,7 @@ public class TextureGenerator : MonoBehaviour
 
     private bool isAutoMaze = false;
     private bool NeedRedraw = false;
-    private ThinWalledMaze Maze;
+    private CellMaze Maze;
     private Color[] ColorMap;
 
     private int size;
@@ -40,9 +40,8 @@ public class TextureGenerator : MonoBehaviour
         set
         {
             size = value;
-            Maze = new ThinWalledMaze(Size, Size);
-            outTexture = new Texture2D(Maze.OutTextureWidth, Maze.OutTextureHeight, TextureFormat.ARGB32, false);
-            outTexture.filterMode = FilterMode.Point;
+            Maze = Maze.SetSize(Size, Size);
+            outTexture.Resize(Maze.OutTextureWidth, Maze.OutTextureHeight);
             Command(lastCommand);
         }
         get
@@ -53,6 +52,9 @@ public class TextureGenerator : MonoBehaviour
 
     void Start()
     {
+        Maze = new ThinWalledMaze(1, 1);
+        outTexture = new Texture2D(Maze.OutTextureWidth, Maze.OutTextureHeight, TextureFormat.ARGB32, false);
+        outTexture.filterMode = FilterMode.Point;
         Size = 30;
 
         if (null != StepInput)
@@ -70,6 +72,14 @@ public class TextureGenerator : MonoBehaviour
         switch (type)
         {
             default:
+            case GenType.SetThick:
+                Maze = new ThickWalledMaze(Size, Size);
+                outTexture.Resize(Maze.OutTextureWidth, Maze.OutTextureHeight);
+                break;
+            case GenType.SetThin:
+                Maze = new ThinWalledMaze(Size, Size);
+                outTexture.Resize(Maze.OutTextureWidth, Maze.OutTextureHeight);
+                break;
             case GenType.Maze:
                 Maze.Generate();
                 break;
