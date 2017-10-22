@@ -5,7 +5,6 @@ using UnityEngine;
 //https://habrahabr.ru/post/321210/
 public class AldousBroderThin : WalledMaze
 {
-    public AldousBroderThin() { }
     public AldousBroderThin(int width, int height)
     {
         SetSize(width, height);

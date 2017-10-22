@@ -5,7 +5,6 @@ using UnityEngine;
 //https://habrahabr.ru/post/321210/
 public class WilsonThin : WalledMaze
 {
-    public WilsonThin() { }
     public WilsonThin(int width, int height)
     {
         SetSize(width, height);

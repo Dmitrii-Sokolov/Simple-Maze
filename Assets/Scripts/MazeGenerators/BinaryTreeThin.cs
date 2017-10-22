@@ -10,7 +10,6 @@ public class BinaryTreeThin : WalledMaze
         IntVector2.East, IntVector2.North
     };
 
-    public BinaryTreeThin() { }
     public BinaryTreeThin(int width, int height)
     {
         SetSize(width, height);

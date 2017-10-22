@@ -5,7 +5,6 @@ using UnityEngine;
 //https://habrahabr.ru/post/320140/
 public class SidewinderThin : WalledMaze
 {
-
     private const float horChance = 0.6f;
 
     private static List<IntVector2> shiftsSimple = new List<IntVector2>()
@@ -15,7 +14,6 @@ public class SidewinderThin : WalledMaze
 
     private int rowStart;
 
-    public SidewinderThin() { }
     public SidewinderThin(int width, int height)
     {
         SetSize(width, height);

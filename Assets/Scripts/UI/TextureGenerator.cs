@@ -18,7 +18,7 @@ public class TextureGenerator : MonoBehaviour
 
     public enum GenerateType
     {
-        Wilson, AldousBroder, HuntAndKill, Sidewinder, BinaryTree, DeepSearch, DeepSearchT
+        Wilson, AldousBroder, HuntAndKill, Sidewinder, BinaryTree, DeepSearch, DeepSearchT, RandomString
     }
 
     public enum CommandType
@@ -85,6 +85,9 @@ public class TextureGenerator : MonoBehaviour
                 break;
             case GenerateType.DeepSearchT:
                 Maze = new DeepSearchThick(Size, Size);
+                break;
+            case GenerateType.RandomString:
+                Maze = new RandomStringThin(Size, Size);
                 break;
         }
     }

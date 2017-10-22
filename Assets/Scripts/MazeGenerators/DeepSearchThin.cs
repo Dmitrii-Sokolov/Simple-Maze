@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DeepSearchThin : WalledMaze
 {
-    public DeepSearchThin() { }
     public DeepSearchThin(int width, int height)
     {
         SetSize(width, height);

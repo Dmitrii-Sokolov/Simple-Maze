@@ -5,7 +5,6 @@ using UnityEngine;
 //http://wiki.roblox.com/index.php/Hunt-and-Kill
 public class HuntAndKillThin : WalledMaze
 {
-    public HuntAndKillThin() { }
     public HuntAndKillThin(int width, int height)
     {
         SetSize(width, height);

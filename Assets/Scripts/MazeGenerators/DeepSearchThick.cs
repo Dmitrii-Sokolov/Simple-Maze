@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DeepSearchThick : CellMaze
 {
-    public DeepSearchThick() { }
     public DeepSearchThick(int width, int height)
     {
         SetSize(width, height);
