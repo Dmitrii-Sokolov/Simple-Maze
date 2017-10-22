@@ -16,21 +16,26 @@ public class TextureGenerator : MonoBehaviour
     private Image targetImage;
 
 
-    public enum GenType
+    public enum GenerateType
     {
-        SetWilsonThin, SetAldousBroderThin, SetHuntAndKill, SetSidewinder, SetBinaryTree, SetDeepSearchThin, SetDeepSearchThick, Maze, MazeStep, AutoMaze, AutoMazeStop, MazeClear
+        Wilson, AldousBroder, HuntAndKill, Sidewinder, BinaryTree, DeepSearch, DeepSearchT
+    }
+
+    public enum CommandType
+    {
+        AutoStep, OneStep, Stop, Clear, Full
     }
 
     private float currentTime = 0;
     private float nextTime = 0;
     private float timeStep = 0.008f;
-    private GenType lastCommand = GenType.AutoMaze;
+    private CommandType lastCommand = CommandType.AutoStep;
 
-    private bool isAutoMaze = false;
-    private bool NeedRedraw = false;
+    private bool isAutoMaze = true;
+    private bool NeedRedraw = true;
     private CellMaze Maze;
 
-    private int size;
+    private int size = 30;
     private int Size
     {
         set
@@ -47,60 +52,66 @@ public class TextureGenerator : MonoBehaviour
 
     void Start()
     {
-        Maze = new AldousBroderThin();
-        Size = 30;
-
         if (null != StepInput)
-            StepInput.onValueChanged.AddListener(c => timeStep = Mathf.Pow(c, 4));
+            StepInput.onValueChanged.AddListener(c => c = Mathf.Pow(c, 4));
 
         if (null != SizeInput)
             SizeInput.onValueChanged.AddListener(c => Size = (int)c);
     }
 
-    public void Command(GenType type)
+    public void SetType(GenerateType type)
     {
-        lastCommand = type;
         NeedRedraw = true;
-
         switch (type)
         {
             default:
-            case GenType.SetWilsonThin:
+            case GenerateType.Wilson:
                 Maze = new WilsonThin(Size, Size);
                 break;
-            case GenType.SetAldousBroderThin:
+            case GenerateType.AldousBroder:
                 Maze = new AldousBroderThin(Size, Size);
                 break;
-            case GenType.SetHuntAndKill:
+            case GenerateType.HuntAndKill:
                 Maze = new HuntAndKillThin(Size, Size);
                 break;
-            case GenType.SetSidewinder:
+            case GenerateType.Sidewinder:
                 Maze = new SidewinderThin(Size, Size);
                 break;
-            case GenType.SetBinaryTree:
+            case GenerateType.BinaryTree:
                 Maze = new BinaryTreeThin(Size, Size);
                 break;
-            case GenType.SetDeepSearchThin:
+            case GenerateType.DeepSearch:
                 Maze = new DeepSearchThin(Size, Size);
                 break;
-            case GenType.SetDeepSearchThick:
+            case GenerateType.DeepSearchT:
                 Maze = new DeepSearchThick(Size, Size);
                 break;
-            case GenType.Maze:
+        }
+    }
+
+    public void Command(CommandType command)
+    {
+        lastCommand = command;
+        NeedRedraw = true;
+
+        switch (command)
+        {
+            default:
+            case CommandType.Full:
                 Maze.Generate();
                 break;
-            case GenType.MazeStep:
+            case CommandType.OneStep:
                 Maze.NextStep();
                 break;
-            case GenType.AutoMaze:
+            case CommandType.AutoStep:
                 isAutoMaze = true;
                 nextTime = 0;
                 currentTime = 0;
                 break;
-            case GenType.AutoMazeStop:
+            case CommandType.Stop:
                 isAutoMaze = false;
                 break;
-            case GenType.MazeClear:
+            case CommandType.Clear:
                 Maze.Clear();
                 break;
         }
