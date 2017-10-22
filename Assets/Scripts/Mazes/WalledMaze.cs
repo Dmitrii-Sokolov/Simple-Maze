@@ -21,6 +21,7 @@ public abstract class WalledMaze : CellMaze
     private Color[] RoomRig = new Color[RoomSize * RoomSize];
     private Color[] RoomFull = new Color[RoomSize * RoomSize];
     private Color[] RoomEmpty = new Color[RoomSize * RoomSize];
+    private Color[] RoomTemp = new Color[RoomSize * RoomSize];
 
     public WalledMaze() { }
 
@@ -43,6 +44,7 @@ public abstract class WalledMaze : CellMaze
             RoomRig[i] = Rig;
             RoomFull[i] = Full;
             RoomEmpty[i] = Empty;
+            RoomTemp[i] = Temprorary;
         }
 
         for (int i = 0; i < WallSize * RoomSize; i++)
@@ -65,6 +67,11 @@ public abstract class WalledMaze : CellMaze
     }
 
     public abstract override bool NextStep();
+
+    protected void PaintTemp(IntVector2 cell, bool temp)
+    {
+        Texture.SetPixels((WallSize + RoomSize) * cell.x + WallSize, (WallSize + RoomSize) * cell.y + WallSize, RoomSize, RoomSize, temp ? RoomTemp : GetPass(cell) ? RoomEmpty : RoomFull);
+    }
 
     protected override void PaintCell(IntVector2 cell)
     {

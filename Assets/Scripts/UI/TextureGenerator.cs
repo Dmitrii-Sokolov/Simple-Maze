@@ -18,7 +18,7 @@ public class TextureGenerator : MonoBehaviour
 
     public enum GenType
     {
-        SetAldousBroderThin, SetHuntAndKill, SetSidewinder, SetBinary, SetDeepSearchThin, SetDeepSearchThick, Maze, MazeStep, AutoMaze, AutoMazeStop, MazeClear
+        SetWilsonThin, SetAldousBroderThin, SetHuntAndKill, SetSidewinder, SetBinaryTree, SetDeepSearchThin, SetDeepSearchThick, Maze, MazeStep, AutoMaze, AutoMazeStop, MazeClear
     }
 
     private float currentTime = 0;
@@ -47,7 +47,7 @@ public class TextureGenerator : MonoBehaviour
 
     void Start()
     {
-        Maze = new DeepSearchThin();
+        Maze = new AldousBroderThin();
         Size = 30;
 
         if (null != StepInput)
@@ -65,6 +65,9 @@ public class TextureGenerator : MonoBehaviour
         switch (type)
         {
             default:
+            case GenType.SetWilsonThin:
+                Maze = new WilsonThin(Size, Size);
+                break;
             case GenType.SetAldousBroderThin:
                 Maze = new AldousBroderThin(Size, Size);
                 break;
@@ -74,7 +77,7 @@ public class TextureGenerator : MonoBehaviour
             case GenType.SetSidewinder:
                 Maze = new SidewinderThin(Size, Size);
                 break;
-            case GenType.SetBinary:
+            case GenType.SetBinaryTree:
                 Maze = new BinaryTreeThin(Size, Size);
                 break;
             case GenType.SetDeepSearchThin:

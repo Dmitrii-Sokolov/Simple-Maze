@@ -16,6 +16,16 @@ public struct IntVector2
         this.y = y;
     }
 
+    public static bool operator ==(IntVector2 a, IntVector2 b)
+    {
+        return (a.x == b.x) && (a.y == b.y);
+    }
+
+    public static bool operator !=(IntVector2 a, IntVector2 b)
+    {
+        return (a.x != b.x) || (a.y != b.y);
+    }
+
     public static IntVector2 operator +(IntVector2 a, IntVector2 b)
     {
         return new IntVector2(a.x + b.x, a.y + b.y);
@@ -49,6 +59,7 @@ public abstract class CellMaze
         IntVector2.East, IntVector2.North, IntVector2.West, IntVector2.South
     };
 
+    protected static Color Temprorary = Color.yellow;
     protected static Color Rig = Color.red;
     protected static Color Full = Color.black;
     protected static Color Empty = Color.blue;
