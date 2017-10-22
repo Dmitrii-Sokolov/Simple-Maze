@@ -16,6 +16,7 @@ public struct IntVector2
         this.y = y;
     }
 
+
     public static bool operator ==(IntVector2 a, IntVector2 b)
     {
         return (a.x == b.x) && (a.y == b.y);
@@ -49,6 +50,27 @@ public struct IntVector2
     public static IntVector2 operator *(IntVector2 a, int b)
     {
         return new IntVector2(a.x * b, a.y * b);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (!(obj is IntVector2))
+        {
+            return false;
+        }
+
+        var vector = (IntVector2)obj;
+        return x == vector.x &&
+               y == vector.y;
+    }
+
+    public override int GetHashCode()
+    {
+        var hashCode = 1502939027;
+        hashCode = hashCode * -1521134295 + base.GetHashCode();
+        hashCode = hashCode * -1521134295 + x.GetHashCode();
+        hashCode = hashCode * -1521134295 + y.GetHashCode();
+        return hashCode;
     }
 }
 

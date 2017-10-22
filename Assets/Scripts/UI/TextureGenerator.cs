@@ -18,7 +18,7 @@ public class TextureGenerator : MonoBehaviour
 
     public enum GenerateType
     {
-        Wilson, AldousBroder, HuntAndKill, Sidewinder, BinaryTree, DeepSearch, DeepSearchT, RandomString
+        Prim, Kruskal, Wilson, AldousBroder, HuntAndKill, Sidewinder, BinaryTree, DeepSearch, DeepSearchT, RandomString
     }
 
     public enum CommandType
@@ -65,6 +65,12 @@ public class TextureGenerator : MonoBehaviour
         switch (type)
         {
             default:
+            case GenerateType.Prim:
+                Maze = new PrimThin(Size, Size);
+                break;
+            case GenerateType.Kruskal:
+                Maze = new KruskalThin(Size, Size);
+                break;
             case GenerateType.Wilson:
                 Maze = new WilsonThin(Size, Size);
                 break;
