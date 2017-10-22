@@ -13,15 +13,19 @@ public class WilsonThin : WalledMaze
 
     private List<IntVector2> MazeTrace = new List<IntVector2>();
     private int cells;
-    private Dictionary<IntVector2, int> OldCells = new Dictionary<IntVector2, int>();
+    protected int[,] OldCells;
 
     public override void Clear()
     {
         base.Clear();
         SetPass(CurrentCell, true);
         MazeTrace.Clear();
-        OldCells.Clear();
         cells = Width * Height - 1;
+
+        OldCells = new int[Width, Height];
+        for (int i = 0; i < Width; i++)
+            for (int n = 0; n < Height; n++)
+                OldCells[i, n] = -1;
     }
     
     public override bool NextStep()
@@ -34,13 +38,15 @@ public class WilsonThin : WalledMaze
                 {
                     SetRandomCurrent();
                     MazeTrace.Add(CurrentCell);
-                    OldCells.Add(CurrentCell, 0);
+                    OldCells[CurrentCell.x, CurrentCell.y] = 0;
                 }
                 else
                 {
                     SetTunnels();
                     MazeTrace.Clear();
-                    OldCells.Clear();
+                    for (int i = 0; i < Width; i++)
+                        for (int n = 0; n < Height; n++)
+                            OldCells[i, n] = -1;
                 }
             }
             else
@@ -49,20 +55,20 @@ public class WilsonThin : WalledMaze
                 foreach (var item in shifts)
                 {
                     var adj = CurrentCell + item;
-                    if (InMaze(adj))
-                        if (MazeTrace.Count < 2 || MazeTrace[MazeTrace.Count - 2] != adj)
+                    if (MazeTrace.Count < 2 || MazeTrace[MazeTrace.Count - 2] != adj)
+                        if (InMaze(adj))
                             choices.Add(adj);
                 }
 
                 CurrentCell = choices[Random.Range(0, choices.Count)];
 
-                if (OldCells.ContainsKey(CurrentCell))
+                if (OldCells[CurrentCell.x, CurrentCell.y] != -1)
                 {
-                    var cut = OldCells[CurrentCell];
+                    var cut = OldCells[CurrentCell.x, CurrentCell.y];
                     for (int i = cut; i < MazeTrace.Count; i++)
                     {
                         PaintTemp(MazeTrace[i], false);
-                        OldCells.Remove(MazeTrace[i]);
+                        OldCells[MazeTrace[i].x, MazeTrace[i].y] = -1;
                     }
 
                     MazeTrace.RemoveRange(cut, MazeTrace.Count - cut);
@@ -72,7 +78,7 @@ public class WilsonThin : WalledMaze
                     PaintTemp(MazeTrace[MazeTrace.Count - 1], true);
 
                 MazeTrace.Add(CurrentCell);
-                OldCells.Add(CurrentCell, MazeTrace.Count - 1);
+                OldCells[CurrentCell.x, CurrentCell.y] = MazeTrace.Count - 1;
             }
         }
         return (cells != 0);
