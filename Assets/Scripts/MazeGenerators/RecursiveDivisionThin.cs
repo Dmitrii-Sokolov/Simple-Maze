@@ -7,13 +7,52 @@ public class RecursiveDivisionThin : WalledMaze
 {
     private struct Rect
     {
-        public IntVector2 from;
-        public IntVector2 to;
+        public readonly IntVector2 from;
+        public readonly IntVector2 to;
+        public readonly Type type;
+
+        public enum Type
+        {
+            VerticalLine, Vertical, Square, Horizontal, HorizontalLine, Undefined
+        }
 
         public Rect(IntVector2 from, IntVector2 to)
         {
             this.from = from;
             this.to = to;
+
+            if (from.x == to.x)
+                type = Type.VerticalLine;
+            else if (from.y == to.y)
+                type = Type.HorizontalLine;
+            else
+            {
+                var aspect = (to.y - from.y) - (to.x - from.x);
+                if (aspect > 0)
+                    type = Type.Vertical;
+                else if (aspect < 0)
+                    type = Type.Horizontal;
+                else if (aspect == 0)
+                    type = Type.Square;
+                else
+                    type = Type.Undefined;
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                return to.y - from.y;
+            }
+        }
+
+        public int Width
+        {
+            get
+            {
+                return to.x - from.x;
+            }
         }
     }
 
@@ -22,7 +61,7 @@ public class RecursiveDivisionThin : WalledMaze
         SetSize(width, height);
     }
 
-    Stack<Rect> rects = new Stack<Rect>();
+    Queue<Rect> rects = new Queue<Rect>();
     int stepNumber;
 
     public override void Clear()
@@ -31,7 +70,7 @@ public class RecursiveDivisionThin : WalledMaze
         CurrentCell = new IntVector2(-1, -1);
         stepNumber = 0;
         rects.Clear();
-        rects.Push(new Rect(new IntVector2(0, 0), new IntVector2(Width - 1, Height - 1)));
+        rects.Enqueue(new Rect(new IntVector2(0, 0), new IntVector2(Width - 1, Height - 1)));
     }
 
     public override bool NextStep()
@@ -39,63 +78,72 @@ public class RecursiveDivisionThin : WalledMaze
         if (rects.Count == 0)
             return false;
 
-        var rect = rects.Pop();
+        var rect = rects.Dequeue();
         stepNumber++;
 
-        if (rect.from.x == rect.to.x)
+        if (rect.type == Rect.Type.VerticalLine)
         {
             for (int i = rect.from.y; i < rect.to.y; i++)
-            {
-                SetPass(new IntVector2(rect.from.x, i), true);
-                SetPass(new IntVector2(rect.from.x, i + 1), true);
-                SetTunnel(new IntVector2(rect.from.x, i), new IntVector2(rect.from.x, i + 1), true);
-            }
+                SetTunnelNorth(rect.from.x, i);
             return true;
         }
 
-        if (rect.from.y == rect.to.y)
+        if (rect.type == Rect.Type.HorizontalLine)
         {
             for (int i = rect.from.x; i < rect.to.x; i++)
-            {
-                SetPass(new IntVector2(i, rect.from.y), true);
-                SetPass(new IntVector2(i + 1, rect.from.y), true);
-                SetTunnel(new IntVector2(i, rect.from.y), new IntVector2(i + 1, rect.from.y), true);
-            }
+                SetTunnelEast(i, rect.from.y);
             return true;
         }
 
-        if (stepNumber % 2 == 0)
+        if (rect.type == Rect.Type.Horizontal || (rect.type == Rect.Type.Square && Random.value > 0.5f))
         {
             var newX = CustomRandom(rect.from.x, rect.to.x);
-            rects.Push(new Rect(new IntVector2(rect.from.x, rect.from.y), new IntVector2(newX, rect.to.y)));
-            rects.Push(new Rect(new IntVector2(newX + 1, rect.from.y), new IntVector2(rect.to.x, rect.to.y)));
+            rects.Enqueue(new Rect(rect.from, new IntVector2(newX, rect.to.y)));
+            rects.Enqueue(new Rect(new IntVector2(newX + 1, rect.from.y), rect.to));
 
-            var tunnelY = CustomRandom(rect.from.y, rect.to.y + 1);
+            var tunnelY = Random.Range(rect.from.y, rect.to.y);
+            SetTunnelEast(newX, tunnelY);
 
-            SetPass(new IntVector2(newX, tunnelY), true);
-            SetPass(new IntVector2(newX + 1, tunnelY), true);
-            SetTunnel(new IntVector2(newX, tunnelY), new IntVector2(newX + 1, tunnelY), true);
+            return true;
         }
-        else
+
+        if (rect.type == Rect.Type.Vertical || rect.type == Rect.Type.Square)
         {
             var newY = CustomRandom(rect.from.y, rect.to.y);
-            rects.Push(new Rect(new IntVector2(rect.from.x, rect.from.y), new IntVector2(rect.to.x, newY)));
-            rects.Push(new Rect(new IntVector2(rect.from.x, newY + 1), new IntVector2(rect.to.x, rect.to.y)));
+            rects.Enqueue(new Rect(rect.from, new IntVector2(rect.to.x, newY)));
+            rects.Enqueue(new Rect(new IntVector2(rect.from.x, newY + 1), rect.to));
 
-            var tunnelX = CustomRandom(rect.from.x, rect.to.x + 1);
+            var tunnelX = Random.Range(rect.from.x, rect.to.x);
+            SetTunnelNorth(tunnelX, newY);
 
-            SetPass(new IntVector2(tunnelX, newY), true);
-            SetPass(new IntVector2(tunnelX, newY + 1), true);
-            SetTunnel(new IntVector2(tunnelX, newY), new IntVector2(tunnelX, newY + 1), true);
+            return true;
         }
 
-        return true;
+        return false;
     }
 
+    private void SetTunnelEast(int x, int y)
+    {
+        SetPass(new IntVector2(x, y), true);
+        SetPass(new IntVector2(x + 1, y), true);
+        SetTunnel(new IntVector2(x, y), new IntVector2(x + 1, y), true);
+    }
+
+    private void SetTunnelNorth(int x, int y)
+    {
+        SetPass(new IntVector2(x, y), true);
+        SetPass(new IntVector2(x, y + 1), true);
+        SetTunnel(new IntVector2(x, y), new IntVector2(x, y + 1), true);
+    }
+
+    //Borders are included
     private int CustomRandom(int from, int to)
     {
-        var sample = 1.9999f * Random.value - 1;
+        var sample = 2f * Random.value - 1;
+        //sample = -1f .. 1f
         sample = (to - from) * (Mathf.Pow(sample, 3) + 1f) / 2f + from;
+        //(Mathf.Pow(sample, 3) + 1f) / 2f = 0 .. 1f
+        //sample = from .. to
         return Mathf.FloorToInt(sample);
     }
 }

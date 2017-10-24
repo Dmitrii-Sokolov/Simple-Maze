@@ -53,7 +53,7 @@ public class TextureGenerator : MonoBehaviour
     void Start()
     {
         if (null != StepInput)
-            StepInput.onValueChanged.AddListener(c => c = Mathf.Pow(c, 4));
+            StepInput.onValueChanged.AddListener(c => timeStep = Mathf.Pow(c, 4));
 
         if (null != SizeInput)
             SizeInput.onValueChanged.AddListener(c => Size = (int)c);
