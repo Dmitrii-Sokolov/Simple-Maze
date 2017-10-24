@@ -5,30 +5,6 @@ using UnityEngine;
 //https://ru.wikipedia.org/wiki/Алгоритм_Краскала
 public class KruskalThin : WalledMaze
 {
-    private struct Edge : System.IComparable<Edge>
-    {
-        public IntVector2 from;
-        public IntVector2 to;
-        public float ratio;
-
-        public Edge(IntVector2 from, IntVector2 to, float ratio)
-        {
-            this.from = from;
-            this.to = to;
-            this.ratio = ratio;
-        }
-
-        public int CompareTo(Edge obj)
-        {
-            if (ratio > obj.ratio)
-                return 1;
-            if (ratio < obj.ratio)
-                return -1;
-            else
-                return 0;
-        }
-    }
-
     public KruskalThin(int width, int height)
     {
         SetSize(width, height);

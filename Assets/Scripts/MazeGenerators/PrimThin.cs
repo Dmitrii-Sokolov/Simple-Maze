@@ -6,39 +6,15 @@ using UnityEngine;
 //https://ru.wikipedia.org/wiki/Алгоритм_Прима
 public class PrimThin : WalledMaze
 {
-    private struct Edge : System.IComparable<Edge>
+    public PrimThin(int width, int height)
     {
-        public IntVector2 from;
-        public IntVector2 to;
-        public float ratio;
-
-        public Edge(IntVector2 from, IntVector2 to, float ratio)
-        {
-            this.from = from;
-            this.to = to;
-            this.ratio = ratio;
-        }
-
-        public int CompareTo(Edge obj)
-        {
-            if (ratio > obj.ratio)
-                return 1;
-            if (ratio < obj.ratio)
-                return -1;
-            else
-                return 0;
-        }
+        SetSize(width, height);
     }
 
     private LinkedList<Edge> Ratios = new LinkedList<Edge>();
     private float[,] vertRatios;
     private float[,] horRatios;
     private int cells;
-
-    public PrimThin(int width, int height)
-    {
-        SetSize(width, height);
-    }
 
     public override void Clear()
     {
