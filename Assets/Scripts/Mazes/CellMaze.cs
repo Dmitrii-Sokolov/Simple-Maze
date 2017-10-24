@@ -41,6 +41,12 @@ public abstract class CellMaze
 
     protected bool[,] passes;
 
+    public virtual void Click(Vector2 point)
+    {
+        var localPoint = new IntVector2(Mathf.FloorToInt(point.x * Width), Mathf.FloorToInt(point.y * Height));
+        Debug.Log(localPoint);
+    }
+
     public virtual void SetSize(int width, int height)
     {
         Width = width;

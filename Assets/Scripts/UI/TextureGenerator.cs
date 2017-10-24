@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class TextureGenerator : MonoBehaviour
+public class TextureGenerator : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
     private Slider SizeInput;
@@ -15,6 +16,7 @@ public class TextureGenerator : MonoBehaviour
     [SerializeField]
     private Image targetImage;
 
+    RectTransform rectTransform;
 
     public enum GenerateType
     {
@@ -52,6 +54,8 @@ public class TextureGenerator : MonoBehaviour
 
     void Start()
     {
+        rectTransform = gameObject.GetComponent<RectTransform>();
+
         if (null != StepInput)
             StepInput.onValueChanged.AddListener(c => timeStep = Mathf.Pow(c, 4));
 
@@ -179,5 +183,12 @@ public class TextureGenerator : MonoBehaviour
 
         Maze.Texture.Apply();
         targetImage.sprite = Sprite.Create(Maze.Texture, new Rect(0, 0, Maze.OutTextureWidth, Maze.OutTextureHeight), new Vector2(0.5f, 0.5f));
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        var localPos = (eventData.pressPosition - (Vector2)rectTransform.position) - rectTransform.rect.position;
+        var relativePos = new Vector2(localPos.x / rectTransform.rect.width, localPos.y / rectTransform.rect.height);
+        Maze.Click(relativePos);
     }
 }

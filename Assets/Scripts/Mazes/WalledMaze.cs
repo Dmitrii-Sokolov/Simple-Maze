@@ -30,6 +30,12 @@ public abstract class WalledMaze : CellMaze
         SetSize(width, height);
     }
 
+    public override void Click(Vector2 point)
+    {
+        var localPoint = new IntVector2(Mathf.FloorToInt(point.x * Width), Mathf.FloorToInt(point.y * Height));
+        Debug.Log("Not implemented yet");
+    }
+
     public override void SetSize(int width, int height)
     {
         texHeight = (WallSize + RoomSize) * height + WallSize;

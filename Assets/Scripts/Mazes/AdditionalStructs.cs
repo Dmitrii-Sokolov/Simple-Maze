@@ -91,6 +91,10 @@ public struct IntVector2
         this.y = y;
     }
 
+    public override string ToString()
+    {
+        return "(" + x + ", " + y + ")";
+    }
 
     public static bool operator ==(IntVector2 a, IntVector2 b)
     {
