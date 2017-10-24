@@ -18,7 +18,7 @@ public class TextureGenerator : MonoBehaviour
 
     public enum GenerateType
     {
-        RecursiveDivision, Prim, Kruskal, Wilson, AldousBroder, HuntAndKill, Sidewinder, BinaryTree, DeepSearch, DeepSearchT, RandomString
+        RecursiveDivision, RecursiveUnion, Prim, Kruskal, Wilson, AldousBroder, HuntAndKill, Sidewinder, BinaryTree, DeepSearch, DeepSearchT, RandomString
     }
 
     public enum CommandType
@@ -67,6 +67,9 @@ public class TextureGenerator : MonoBehaviour
             default:
             case GenerateType.RecursiveDivision:
                 Maze = new RecursiveDivisionThin(Size, Size);
+                break;
+            case GenerateType.RecursiveUnion:
+                Maze = new RecursiveUnionThin(Size, Size);
                 break;
             case GenerateType.Prim:
                 Maze = new PrimThin(Size, Size);

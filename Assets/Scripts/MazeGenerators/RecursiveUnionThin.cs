@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://progressor-blog.ru/qt/generatsiya-labirinta-i-ego-prohozhdenie/
-public class RecursiveDivisionThin : WalledMaze
+public class RecursiveUnionThin : WalledMaze
 {
-    public RecursiveDivisionThin(int width, int height)
+    public RecursiveUnionThin(int width, int height)
     {
         SetSize(width, height);
     }
@@ -17,19 +17,6 @@ public class RecursiveDivisionThin : WalledMaze
         base.Clear();
         CurrentCell = new IntVector2(-1, -1);
         rects.Clear();
-
-        for (int i = 0; i < Width; i++)
-            for (int n = 0; n < Height; n++)
-                SetPass(new IntVector2(i, n), true);
-
-        for (int i = 0; i < Width; i++)
-            for (int n = 0; n < Height - 1; n++)
-                SetTunnel(new IntVector2(i, n), new IntVector2(i, n + 1), true);
-
-        for (int i = 0; i < Width - 1; i++)
-            for (int n = 0; n < Height; n++)
-                SetTunnel(new IntVector2(i, n), new IntVector2(i + 1, n), true);
-
         rects.Enqueue(new IntRect(new IntVector2(0, 0), new IntVector2(Width - 1, Height - 1)));
     }
 
@@ -40,6 +27,20 @@ public class RecursiveDivisionThin : WalledMaze
 
         var rect = rects.Dequeue();
 
+        if (rect.type == IntRect.Type.VerticalLine)
+        {
+            for (int i = rect.from.y; i < rect.to.y; i++)
+                SetTunnelNorth(rect.from.x, i);
+            return true;
+        }
+
+        if (rect.type == IntRect.Type.HorizontalLine)
+        {
+            for (int i = rect.from.x; i < rect.to.x; i++)
+                SetTunnelEast(i, rect.from.y);
+            return true;
+        }
+
         if (rect.type == IntRect.Type.Horizontal || (rect.type == IntRect.Type.Square && Random.value > 0.5f))
         {
             var newX = CustomRandom(rect.from.x, rect.to.x);
@@ -47,9 +48,7 @@ public class RecursiveDivisionThin : WalledMaze
             rects.Enqueue(new IntRect(new IntVector2(newX + 1, rect.from.y), rect.to));
 
             var tunnelY = Random.Range(rect.from.y, rect.to.y);
-            for (int i = rect.from.y; i < rect.to.y + 1; i++)
-                if (i != tunnelY)
-                    SetTunnel(new IntVector2(newX, i), new IntVector2(newX + 1, i), false);
+            SetTunnelEast(newX, tunnelY);
 
             return true;
         }
@@ -61,14 +60,26 @@ public class RecursiveDivisionThin : WalledMaze
             rects.Enqueue(new IntRect(new IntVector2(rect.from.x, newY + 1), rect.to));
 
             var tunnelX = Random.Range(rect.from.x, rect.to.x);
-            for (int i = rect.from.x; i < rect.to.x + 1; i++)
-                if (i != tunnelX)
-                    SetTunnel(new IntVector2(i, newY), new IntVector2(i, newY + 1), false);
+            SetTunnelNorth(tunnelX, newY);
 
             return true;
         }
 
-        return true;
+        return false;
+    }
+
+    private void SetTunnelEast(int x, int y)
+    {
+        SetPass(new IntVector2(x, y), true);
+        SetPass(new IntVector2(x + 1, y), true);
+        SetTunnel(new IntVector2(x, y), new IntVector2(x + 1, y), true);
+    }
+
+    private void SetTunnelNorth(int x, int y)
+    {
+        SetPass(new IntVector2(x, y), true);
+        SetPass(new IntVector2(x, y + 1), true);
+        SetTunnel(new IntVector2(x, y), new IntVector2(x, y + 1), true);
     }
 
     //Borders are included

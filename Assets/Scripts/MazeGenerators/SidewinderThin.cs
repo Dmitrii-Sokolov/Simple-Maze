@@ -7,11 +7,6 @@ public class SidewinderThin : WalledMaze
 {
     private const float horChance = 0.6f;
 
-    private static List<IntVector2> shiftsSimple = new List<IntVector2>()
-    {
-        IntVector2.East, IntVector2.North
-    };
-
     private int rowStart;
 
     public SidewinderThin(int width, int height)
