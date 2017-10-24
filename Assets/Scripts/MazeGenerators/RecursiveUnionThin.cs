@@ -47,7 +47,7 @@ public class RecursiveUnionThin : WalledMaze
             rects.Enqueue(new IntRect(rect.from, new IntVector2(newX, rect.to.y)));
             rects.Enqueue(new IntRect(new IntVector2(newX + 1, rect.from.y), rect.to));
 
-            var tunnelY = Random.Range(rect.from.y, rect.to.y);
+            var tunnelY = Random.Range(rect.from.y, rect.to.y + 1);
             SetTunnelEast(newX, tunnelY);
 
             return true;
@@ -59,7 +59,7 @@ public class RecursiveUnionThin : WalledMaze
             rects.Enqueue(new IntRect(rect.from, new IntVector2(rect.to.x, newY)));
             rects.Enqueue(new IntRect(new IntVector2(rect.from.x, newY + 1), rect.to));
 
-            var tunnelX = Random.Range(rect.from.x, rect.to.x);
+            var tunnelX = Random.Range(rect.from.x, rect.to.x + 1);
             SetTunnelNorth(tunnelX, newY);
 
             return true;

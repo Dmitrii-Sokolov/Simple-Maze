@@ -46,7 +46,7 @@ public class RecursiveDivisionThin : WalledMaze
             rects.Enqueue(new IntRect(rect.from, new IntVector2(newX, rect.to.y)));
             rects.Enqueue(new IntRect(new IntVector2(newX + 1, rect.from.y), rect.to));
 
-            var tunnelY = Random.Range(rect.from.y, rect.to.y);
+            var tunnelY = Random.Range(rect.from.y, rect.to.y + 1);
             for (int i = rect.from.y; i < rect.to.y + 1; i++)
                 if (i != tunnelY)
                     SetTunnel(new IntVector2(newX, i), new IntVector2(newX + 1, i), false);
@@ -60,7 +60,7 @@ public class RecursiveDivisionThin : WalledMaze
             rects.Enqueue(new IntRect(rect.from, new IntVector2(rect.to.x, newY)));
             rects.Enqueue(new IntRect(new IntVector2(rect.from.x, newY + 1), rect.to));
 
-            var tunnelX = Random.Range(rect.from.x, rect.to.x);
+            var tunnelX = Random.Range(rect.from.x, rect.to.x + 1);
             for (int i = rect.from.x; i < rect.to.x + 1; i++)
                 if (i != tunnelX)
                     SetTunnel(new IntVector2(i, newY), new IntVector2(i, newY + 1), false);
