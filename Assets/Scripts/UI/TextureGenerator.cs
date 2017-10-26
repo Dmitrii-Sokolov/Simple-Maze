@@ -190,5 +190,6 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
         var localPos = (eventData.pressPosition - (Vector2)rectTransform.position) - rectTransform.rect.position;
         var relativePos = new Vector2(localPos.x / rectTransform.rect.width, localPos.y / rectTransform.rect.height);
         Maze.Click(relativePos);
+        Visualize();
     }
 }

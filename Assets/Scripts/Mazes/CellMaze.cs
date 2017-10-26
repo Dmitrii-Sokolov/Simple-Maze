@@ -40,12 +40,42 @@ public abstract class CellMaze
     public virtual int OutTextureHeight { get { return Height; } }
 
     protected bool[,] passes;
+    protected int[,] steps;
 
     public virtual void Click(Vector2 point)
     {
         var localPoint = new IntVector2(Mathf.FloorToInt(point.x * Width), Mathf.FloorToInt(point.y * Height));
-        Debug.Log(localPoint);
+        OnRoomClick(localPoint);
     }
+
+    protected virtual void OnRoomClick(IntVector2 point)
+    {
+        //Debug.Log("Room: " + point);
+        steps = new int[Width, Height];
+        for (int i = 0; i < Width; i++)
+            for (int n = 0; n < Height; n++)
+                steps[i, n] = -1;
+
+        PaveDirections(point, 0);
+    }
+
+    protected virtual void PaveDirections(IntVector2 from, int range)
+    {
+        if (GetPass(from))
+        {
+            steps[from.x, from.y] = range;
+            Texture.SetPixel(from.x, from.y, Color.Lerp(Empty, Full, range / (0.5f * Height * Width)));
+
+            foreach (var item in shifts)
+            {
+                var adj = from + item;
+                if (InMaze(adj))
+                    if (steps[adj.x, adj.y] == -1)
+                        PaveDirections(adj, range + 1);
+            }
+        }
+    }
+
 
     public virtual void SetSize(int width, int height)
     {

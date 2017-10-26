@@ -32,8 +32,33 @@ public abstract class WalledMaze : CellMaze
 
     public override void Click(Vector2 point)
     {
-        var localPoint = new IntVector2(Mathf.FloorToInt(point.x * Width), Mathf.FloorToInt(point.y * Height));
-        Debug.Log("Not implemented yet");
+        var localPoint = new IntVector2(Mathf.FloorToInt(point.x * OutTextureWidth), Mathf.FloorToInt(point.y * OutTextureHeight));
+        var mark = new IntVector2(localPoint.x % (RoomSize + WallSize), localPoint.y % (RoomSize + WallSize));
+        var position = new IntVector2(localPoint.x / (RoomSize + WallSize), localPoint.y / (RoomSize + WallSize));
+
+        if (mark.x < WallSize && mark.y < WallSize)
+            OnWallClick();
+        else if (mark.x >= WallSize && mark.y >= WallSize)
+            OnRoomClick(position);
+        else if (mark.x >= WallSize && mark.y < WallSize)
+            OnTunnelClick(position + IntVector2.South, position);
+        else if (mark.x < WallSize && mark.y >= WallSize)
+            OnTunnelClick(position + IntVector2.West, position);
+    }
+
+    protected override void OnRoomClick(IntVector2 point)
+    {
+        Debug.Log("Room: " + point);
+    }
+
+    protected void OnTunnelClick(IntVector2 from, IntVector2 to)
+    {
+        Debug.Log("Tunnel: from " + from + " to " + to);
+    }
+
+    protected void OnWallClick()
+    {
+        Debug.Log("Wall");
     }
 
     public override void SetSize(int width, int height)
