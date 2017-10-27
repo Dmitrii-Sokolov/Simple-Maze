@@ -13,6 +13,8 @@ public abstract class CellMaze
     protected static Color Rig = Color.red;
     protected static Color Full = Color.black;
     protected static Color Empty = Color.blue;
+    protected static Color MinRangeColor = Color.green;
+    protected static Color MaxRangeColor = new Color(0f, 0.1f, 0f);
 
     protected IntVector2 currentCell;
     protected virtual IntVector2 CurrentCell
@@ -41,6 +43,7 @@ public abstract class CellMaze
 
     protected bool[,] passes;
     protected int[,] steps;
+    protected int maxRange;
 
     public virtual void Click(Vector2 point)
     {
@@ -50,13 +53,18 @@ public abstract class CellMaze
 
     protected virtual void OnRoomClick(IntVector2 point)
     {
-        //Debug.Log("Room: " + point);
         steps = new int[Width, Height];
         for (int i = 0; i < Width; i++)
             for (int n = 0; n < Height; n++)
                 steps[i, n] = -1;
 
+        maxRange = 0;
         PaveDirections(point, 0);
+
+        for (int i = 0; i < Width; i++)
+            for (int n = 0; n < Height; n++)
+                if (steps[i, n] != -1)
+                    Texture.SetPixel(i, n, Color.Lerp(MinRangeColor, MaxRangeColor, steps[i, n] / ((float)maxRange)));
     }
 
     protected virtual void PaveDirections(IntVector2 from, int range)
@@ -64,7 +72,7 @@ public abstract class CellMaze
         if (GetPass(from))
         {
             steps[from.x, from.y] = range;
-            Texture.SetPixel(from.x, from.y, Color.Lerp(Empty, Full, range / (0.5f * Height * Width)));
+            maxRange = Mathf.Max(range, maxRange);
 
             foreach (var item in shifts)
             {
@@ -75,7 +83,6 @@ public abstract class CellMaze
             }
         }
     }
-
 
     public virtual void SetSize(int width, int height)
     {
