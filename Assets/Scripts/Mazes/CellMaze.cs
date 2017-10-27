@@ -53,34 +53,35 @@ public abstract class CellMaze
 
     protected virtual void OnRoomClick(IntVector2 point)
     {
-        steps = new int[Width, Height];
-        for (int i = 0; i < Width; i++)
-            for (int n = 0; n < Height; n++)
-                steps[i, n] = -1;
+        if (InMaze(point) && GetPass(point))
+        {
+            steps = new int[Width, Height];
+            for (int i = 0; i < Width; i++)
+                for (int n = 0; n < Height; n++)
+                    steps[i, n] = -1;
 
-        maxRange = 0;
-        PaveDirections(point, 0);
+            maxRange = 0;
+            PaveDirections(point, 0);
 
-        for (int i = 0; i < Width; i++)
-            for (int n = 0; n < Height; n++)
-                if (steps[i, n] != -1)
-                    Texture.SetPixel(i, n, Color.Lerp(MinRangeColor, MaxRangeColor, steps[i, n] / ((float)maxRange)));
+            for (int i = 0; i < Width; i++)
+                for (int n = 0; n < Height; n++)
+                    if (steps[i, n] != -1)
+                        PaintCell(new IntVector2(i, n), Color.Lerp(MinRangeColor, MaxRangeColor, steps[i, n] / ((float)maxRange)));
+        }
     }
 
     protected virtual void PaveDirections(IntVector2 from, int range)
     {
-        if (GetPass(from))
-        {
-            steps[from.x, from.y] = range;
-            maxRange = Mathf.Max(range, maxRange);
+        steps[from.x, from.y] = range;
+        maxRange = Mathf.Max(range, maxRange);
 
-            foreach (var item in shifts)
-            {
-                var adj = from + item;
-                if (InMaze(adj))
-                    if (steps[adj.x, adj.y] == -1)
+        foreach (var item in shifts)
+        {
+            var adj = from + item;
+            if (InMaze(adj))
+                if (steps[adj.x, adj.y] == -1)
+                    if (GetPass(adj))
                         PaveDirections(adj, range + 1);
-            }
         }
     }
 
@@ -126,6 +127,11 @@ public abstract class CellMaze
             passes[cell.x, cell.y] = pass;
             PaintCell(cell);
         }
+    }
+
+    protected virtual void PaintCell(IntVector2 cell, Color color)
+    {
+        Texture.SetPixel(cell.x, cell.y, color);
     }
 
     protected virtual void PaintCell(IntVector2 cell)
