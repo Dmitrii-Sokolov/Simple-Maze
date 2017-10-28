@@ -45,45 +45,21 @@ public abstract class WalledMaze : CellMaze
         else if (mark.x < WallSize && mark.y >= WallSize)
             OnTunnelClick(position + IntVector2.West, position);
     }
-
-    protected override void OnRoomClick(IntVector2 point)
-    {
-        if (InMaze(point) && GetPass(point))
-        {
-            steps = new int[Width, Height];
-            for (int i = 0; i < Width; i++)
-                for (int n = 0; n < Height; n++)
-                    steps[i, n] = -1;
-
-            maxRange = 0;
-            PaveDirections(point, 0);
-
-            for (int i = 0; i < Width; i++)
-                for (int n = 0; n < Height; n++)
-                {
-                    var current = new IntVector2(i, n);
-                    var up = current + IntVector2.North;
-                    var right = current + IntVector2.East;
-
-                    if (steps[i, n] != -1)
-                        PaintCell(current, Color.Lerp(MinRangeColor, MaxRangeColor, steps[i, n] / ((float)maxRange)));
-
-                    if (InMaze(up))
-                        if (steps[i, n + 1] != -1)
-                            if (GetTunnel(current, up))
-                                PaintTunnel(current, up, Color.Lerp(MinRangeColor, MaxRangeColor, 0.5f * (steps[i, n] + steps[i, n + 1]) / ((float)maxRange)));
-
-                    if (InMaze(right))
-                        if (steps[i + 1, n] != -1)
-                            if (GetTunnel(current, right))
-                                PaintTunnel(current, right, Color.Lerp(MinRangeColor, MaxRangeColor, 0.5f * (steps[i, n] + steps[i + 1, n]) / ((float)maxRange)));
-                }
-        }
-    }
-
+    
     protected void OnTunnelClick(IntVector2 from, IntVector2 to)
     {
-        //Debug.Log("Tunnel: from " + from + " to " + to);
+        if (InMaze(from) && InMaze(to) && GetTunnel(from, to))
+        {
+            PaveInit();
+
+            steps[from.x, from.y] = 0;
+            steps[to.x, to.y] = 0;
+            stepsQueue.Enqueue(from);
+            stepsQueue.Enqueue(to);
+
+            PaveDirections();
+            PavePaint();
+        }
     }
 
     protected void OnWallClick()
@@ -91,20 +67,49 @@ public abstract class WalledMaze : CellMaze
         //Debug.Log("Wall");
     }
 
-    protected override void PaveDirections(IntVector2 from, int range)
+    protected override void PaveDirections()
     {
-        steps[from.x, from.y] = range;
-        maxRange = Mathf.Max(range, maxRange);
-
-        foreach (var item in shifts)
+        while (stepsQueue.Count > 0)
         {
-            var adj = from + item;
-            if (InMaze(adj))
-                if (steps[adj.x, adj.y] == -1)
-                    if (GetTunnel(from, adj))
-                        if (GetPass(adj))
-                        PaveDirections(adj, range + 1);
+            var from = stepsQueue.Dequeue();
+            foreach (var item in shifts)
+            {
+                var adj = from + item;
+                if (InMaze(adj))
+                    if (steps[adj.x, adj.y] == -1 || steps[adj.x, adj.y] > steps[from.x, from.y] + 1)
+                        if (GetTunnel(from, adj))
+                            if (GetPass(adj))
+                            {
+                                steps[adj.x, adj.y] = steps[from.x, from.y] + 1;
+                                maxRange = Mathf.Max(steps[adj.x, adj.y], maxRange);
+                                stepsQueue.Enqueue(adj);
+                            }
+            }
         }
+    }
+
+    protected override void PavePaint()
+    {
+        for (int i = 0; i < Width; i++)
+            for (int n = 0; n < Height; n++)
+            {
+                var current = new IntVector2(i, n);
+                var up = current + IntVector2.North;
+                var right = current + IntVector2.East;
+
+                if (steps[i, n] != -1)
+                    PaintCell(current, Color.Lerp(MinRangeColor, MaxRangeColor, steps[i, n] / ((float)maxRange)));
+
+                if (InMaze(up))
+                    if (steps[i, n + 1] != -1)
+                        if (GetTunnel(current, up))
+                            PaintTunnel(current, up, Color.Lerp(MinRangeColor, MaxRangeColor, 0.5f * (steps[i, n] + steps[i, n + 1]) / ((float)maxRange)));
+
+                if (InMaze(right))
+                    if (steps[i + 1, n] != -1)
+                        if (GetTunnel(current, right))
+                            PaintTunnel(current, right, Color.Lerp(MinRangeColor, MaxRangeColor, 0.5f * (steps[i, n] + steps[i + 1, n]) / ((float)maxRange)));
+            }
     }
 
     public override void SetSize(int width, int height)

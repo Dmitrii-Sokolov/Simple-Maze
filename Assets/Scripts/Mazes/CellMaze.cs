@@ -43,6 +43,7 @@ public abstract class CellMaze
 
     protected bool[,] passes;
     protected int[,] steps;
+    protected Queue<IntVector2> stepsQueue = new Queue<IntVector2>();
     protected int maxRange;
 
     public virtual void Click(Vector2 point)
@@ -55,34 +56,53 @@ public abstract class CellMaze
     {
         if (InMaze(point) && GetPass(point))
         {
-            steps = new int[Width, Height];
-            for (int i = 0; i < Width; i++)
-                for (int n = 0; n < Height; n++)
-                    steps[i, n] = -1;
+            PaveInit();
 
-            maxRange = 0;
-            PaveDirections(point, 0);
+            steps[point.x, point.y] = 0;
+            stepsQueue.Enqueue(point);
 
-            for (int i = 0; i < Width; i++)
-                for (int n = 0; n < Height; n++)
-                    if (steps[i, n] != -1)
-                        PaintCell(new IntVector2(i, n), Color.Lerp(MinRangeColor, MaxRangeColor, steps[i, n] / ((float)maxRange)));
+            PaveDirections();
+            PavePaint();
         }
     }
 
-    protected virtual void PaveDirections(IntVector2 from, int range)
+    protected virtual void PaveInit()
     {
-        steps[from.x, from.y] = range;
-        maxRange = Mathf.Max(range, maxRange);
+        steps = new int[Width, Height];
+        for (int i = 0; i < Width; i++)
+            for (int n = 0; n < Height; n++)
+                steps[i, n] = -1;
 
-        foreach (var item in shifts)
+        stepsQueue.Clear();
+        maxRange = 0;
+    }
+
+    protected virtual void PaveDirections()
+    {
+        while (stepsQueue.Count > 0)
         {
-            var adj = from + item;
-            if (InMaze(adj))
-                if (steps[adj.x, adj.y] == -1)
-                    if (GetPass(adj))
-                        PaveDirections(adj, range + 1);
+            var from = stepsQueue.Dequeue();
+            foreach (var item in shifts)
+            {
+                var adj = from + item;
+                if (InMaze(adj))
+                    if (steps[adj.x, adj.y] == -1 || steps[adj.x, adj.y] > steps[from.x, from.y] + 1)
+                        if (GetPass(adj))
+                        {
+                            steps[adj.x, adj.y] = steps[from.x, from.y] + 1;
+                            maxRange = Mathf.Max(steps[adj.x, adj.y], maxRange);
+                            stepsQueue.Enqueue(adj);
+                        }
+            }
         }
+    }
+
+    protected virtual void PavePaint()
+    {
+        for (int i = 0; i < Width; i++)
+            for (int n = 0; n < Height; n++)
+                if (steps[i, n] != -1)
+                    PaintCell(new IntVector2(i, n), Color.Lerp(MinRangeColor, MaxRangeColor, steps[i, n] / ((float)maxRange)));
     }
 
     public virtual void SetSize(int width, int height)
