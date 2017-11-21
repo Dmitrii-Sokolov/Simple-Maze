@@ -18,11 +18,6 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
 
     RectTransform rectTransform;
 
-    public enum GenerateType
-    {
-        RecursiveDivision, RecursiveUnion, Prim, Kruskal, Wilson, AldousBroder, HuntAndKill, Sidewinder, BinaryTree, DeepSearch, DeepSearchT, RandomString
-    }
-
     public enum CommandType
     {
         AutoStep, OneStep, Stop, Clear, Full
@@ -35,7 +30,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
 
     private bool isAutoMaze = true;
     private bool NeedRedraw = true;
-    private CellMaze Maze;
+    private Maze Maze;
 
     private int size = 30;
     private int Size
@@ -63,49 +58,12 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
             SizeInput.onValueChanged.AddListener(c => Size = (int)c);
     }
 
-    public void SetType(GenerateType type)
+    public void SetType(MazeGeneratorType type)
     {
+        Maze = new WalledMaze(Size, Size);
+
         NeedRedraw = true;
-        switch (type)
-        {
-            default:
-            case GenerateType.RecursiveDivision:
-                Maze = new RecursiveDivisionThin(Size, Size);
-                break;
-            case GenerateType.RecursiveUnion:
-                Maze = new RecursiveUnionThin(Size, Size);
-                break;
-            case GenerateType.Prim:
-                Maze = new PrimThin(Size, Size);
-                break;
-            case GenerateType.Kruskal:
-                Maze = new KruskalThin(Size, Size);
-                break;
-            case GenerateType.Wilson:
-                Maze = new WilsonThin(Size, Size);
-                break;
-            case GenerateType.AldousBroder:
-                Maze = new AldousBroderThin(Size, Size);
-                break;
-            case GenerateType.HuntAndKill:
-                Maze = new HuntAndKillThin(Size, Size);
-                break;
-            case GenerateType.Sidewinder:
-                Maze = new SidewinderThin(Size, Size);
-                break;
-            case GenerateType.BinaryTree:
-                Maze = new BinaryTreeThin(Size, Size);
-                break;
-            case GenerateType.DeepSearch:
-                Maze = new DeepSearchThin(Size, Size);
-                break;
-            case GenerateType.DeepSearchT:
-                Maze = new DeepSearchThick(Size, Size);
-                break;
-            case GenerateType.RandomString:
-                Maze = new RandomStringThin(Size, Size);
-                break;
-        }
+        Maze.Generator = MazeGeneratorExtensions.CreateGenerator(type, Size, Size);
     }
 
     public void Command(CommandType command)
@@ -117,10 +75,10 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
         {
             default:
             case CommandType.Full:
-                Maze.Generate();
+                Maze.Generator.Generate();
                 break;
             case CommandType.OneStep:
-                Maze.NextStep();
+                Maze.Generator.NextStep();
                 break;
             case CommandType.AutoStep:
                 isAutoMaze = true;
@@ -146,7 +104,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
             {
                 NeedRedraw = true;
                 nextTime += timeStep;
-                if (!Maze.NextStep())
+                if (!Maze.Generator.NextStep())
                 {
                     isAutoMaze = false;
                     Debug.Log("Finished in " + currentTime + " s");

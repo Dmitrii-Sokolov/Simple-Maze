@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/251631/
-public class RandomStringThin : WalledMaze
+public class RandomStringThin : WalledMaze, MazeGenerator
 {
+    public void Generate() { while (NextStep()) ; }
+    public void Init(Maze TargetMaze) { }
+
     public RandomStringThin(int width, int height)
     {
         SetSize(width, height);
@@ -16,7 +19,7 @@ public class RandomStringThin : WalledMaze
         CurrentCell = new IntVector2(0, 0);
     }
 
-    public override bool NextStep()
+    public bool NextStep()
     {
         if (Random.value > 0.5f)
         {

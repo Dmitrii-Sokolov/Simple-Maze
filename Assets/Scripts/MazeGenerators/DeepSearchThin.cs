@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeepSearchThin : WalledMaze
+public class DeepSearchThin : WalledMaze, MazeGenerator
 {
+    public void Generate() { while (NextStep()) ; }
+    public void Init(Maze TargetMaze) { }
+
     public DeepSearchThin(int width, int height)
     {
         SetSize(width, height);
@@ -17,7 +20,7 @@ public class DeepSearchThin : WalledMaze
         MazeTrace.Clear();
     }
 
-    public override bool NextStep()
+    public bool NextStep()
     {
         SetPass(CurrentCell, true);
         var choices = new List<IntVector2>();

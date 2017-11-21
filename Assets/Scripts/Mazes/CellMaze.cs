@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class CellMaze
+public class CellMaze : Maze
 {
     protected static List<IntVector2> shifts = new List<IntVector2>()
     {
         IntVector2.East, IntVector2.North, IntVector2.West, IntVector2.South
     };
+
+    private MazeGenerator generator { set; get; }
+    public MazeGenerator Generator { set { Clear(); generator = value; generator.Init(this); } get { return generator; } }
 
     protected static Color Temprorary = Color.yellow;
     protected static Color Rig = Color.red;
@@ -128,19 +131,12 @@ public abstract class CellMaze
         CurrentCell = new IntVector2(Random.Range(0, Width), Random.Range(0, Height));
     }
 
-    public void Generate()
-    {
-        while (NextStep());
-    }
-
-    public abstract bool NextStep();
-
     protected bool InMaze(IntVector2 cell)
     {
         return ((cell.x < Width) && (cell.x >= 0) && (cell.y < Height) && (cell.y >= 0));
     }
 
-    protected virtual void SetPass(IntVector2 cell, bool pass)
+    public virtual void SetPass(IntVector2 cell, bool pass)
     {
         if (passes[cell.x, cell.y] != pass)
         {
@@ -164,8 +160,18 @@ public abstract class CellMaze
         Texture.SetPixel(cell.x, cell.y, Rig);
     }
 
-    protected bool GetPass(IntVector2 cell)
+    public bool GetPass(IntVector2 cell)
     {
         return passes[cell.x, cell.y];
+    }
+
+    public virtual void SetTunnel(IntVector2 cell, IntVector2 to, bool tunnel)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public virtual bool GetTunnel(IntVector2 cell, IntVector2 to)
+    {
+        throw new System.NotImplementedException();
     }
 }

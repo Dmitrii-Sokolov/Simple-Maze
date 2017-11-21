@@ -3,24 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://progressor-blog.ru/qt/generatsiya-labirinta-i-ego-prohozhdenie/
-public class RecursiveUnionThin : WalledMaze
+public class RecursiveUnionThin : MazeGenerator
 {
-    public RecursiveUnionThin(int width, int height)
-    {
-        SetSize(width, height);
-    }
+    public void Generate() { while (NextStep()); }
 
     Queue<IntRect> rects = new Queue<IntRect>();
+    private Maze maze;
 
-    public override void Clear()
+    public void Init(Maze TargetMaze)
     {
-        base.Clear();
-        CurrentCell = new IntVector2(-1, -1);
+        maze = TargetMaze;
+        //CurrentCell = new IntVector2(-1, -1);
         rects.Clear();
-        rects.Enqueue(new IntRect(new IntVector2(0, 0), new IntVector2(Width - 1, Height - 1)));
+        rects.Enqueue(new IntRect(new IntVector2(0, 0), new IntVector2(maze.Width - 1, maze.Height - 1)));
     }
 
-    public override bool NextStep()
+    public bool NextStep()
     {
         if (rects.Count == 0)
             return false;
@@ -70,16 +68,16 @@ public class RecursiveUnionThin : WalledMaze
 
     private void SetTunnelEast(int x, int y)
     {
-        SetPass(new IntVector2(x, y), true);
-        SetPass(new IntVector2(x + 1, y), true);
-        SetTunnel(new IntVector2(x, y), new IntVector2(x + 1, y), true);
+        maze.SetPass(new IntVector2(x, y), true);
+        maze.SetPass(new IntVector2(x + 1, y), true);
+        maze.SetTunnel(new IntVector2(x, y), new IntVector2(x + 1, y), true);
     }
 
     private void SetTunnelNorth(int x, int y)
     {
-        SetPass(new IntVector2(x, y), true);
-        SetPass(new IntVector2(x, y + 1), true);
-        SetTunnel(new IntVector2(x, y), new IntVector2(x, y + 1), true);
+        maze.SetPass(new IntVector2(x, y), true);
+        maze.SetPass(new IntVector2(x, y + 1), true);
+        maze.SetTunnel(new IntVector2(x, y), new IntVector2(x, y + 1), true);
     }
 
     //Borders are included

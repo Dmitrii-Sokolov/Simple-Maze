@@ -4,8 +4,11 @@ using System.Linq;
 using UnityEngine;
 
 //https://ru.wikipedia.org/wiki/Алгоритм_Прима
-public class PrimThin : WalledMaze
+public class PrimThin : WalledMaze, MazeGenerator
 {
+    public void Generate() { while (NextStep()) ; }
+    public void Init(Maze TargetMaze) { }
+
     public PrimThin(int width, int height)
     {
         SetSize(width, height);
@@ -33,7 +36,7 @@ public class PrimThin : WalledMaze
                 horRatios[i, n] = Random.value;
     }
 
-    public override bool NextStep()
+    public bool NextStep()
     {
         SetPass(CurrentCell, true);
         if (cells == 0)

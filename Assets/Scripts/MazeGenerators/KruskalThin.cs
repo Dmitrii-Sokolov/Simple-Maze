@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://ru.wikipedia.org/wiki/Алгоритм_Краскала
-public class KruskalThin : WalledMaze
+public class KruskalThin : WalledMaze, MazeGenerator
 {
+    public void Generate() { while (NextStep()) ; }
+    public void Init(Maze TargetMaze) { }
+
     public KruskalThin(int width, int height)
     {
         SetSize(width, height);
@@ -41,7 +44,7 @@ public class KruskalThin : WalledMaze
         System.Array.Sort(Ratios);
     }
 
-    public override bool NextStep()
+    public bool NextStep()
     {
         if (GetGroup(Ratios[index].from) != GetGroup(Ratios[index].to))
         {

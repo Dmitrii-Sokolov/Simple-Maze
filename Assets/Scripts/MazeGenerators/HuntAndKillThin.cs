@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://wiki.roblox.com/index.php/Hunt-and-Kill
-public class HuntAndKillThin : WalledMaze
+public class HuntAndKillThin : WalledMaze, MazeGenerator
 {
+    public void Generate() { while (NextStep()) ; }
+    public void Init(Maze TargetMaze) { }
+
     public HuntAndKillThin(int width, int height)
     {
         SetSize(width, height);
     }
 
-    public override bool NextStep()
+    public bool NextStep()
     {
         SetPass(CurrentCell, true);
         var choices = new List<IntVector2>();

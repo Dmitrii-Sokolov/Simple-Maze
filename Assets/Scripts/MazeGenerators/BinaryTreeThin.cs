@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/320140/
-public class BinaryTreeThin : WalledMaze
+public class BinaryTreeThin : WalledMaze, MazeGenerator
 {
+    public void Generate() { while (NextStep()) ; }
+    public void Init(Maze TargetMaze) { }
+
     private static List<IntVector2> shiftsSimple = new List<IntVector2>()
     {
         IntVector2.East, IntVector2.North
@@ -21,7 +24,7 @@ public class BinaryTreeThin : WalledMaze
         CurrentCell = new IntVector2(0, 0);
     }
 
-    public override bool NextStep()
+    public bool NextStep()
     {
         SetPass(CurrentCell, true);
         var choices = new List<IntVector2>();

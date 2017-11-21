@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/321210/
-public class WilsonThin : WalledMaze
+public class WilsonThin : WalledMaze, MazeGenerator
 {
+    public void Generate() { while (NextStep()) ; }
+    public void Init(Maze TargetMaze) { }
+
     public WilsonThin(int width, int height)
     {
         SetSize(width, height);
@@ -27,7 +30,7 @@ public class WilsonThin : WalledMaze
                 OldCells[i, n] = -1;
     }
     
-    public override bool NextStep()
+    public bool NextStep()
     {
         if (cells != 0)
         {

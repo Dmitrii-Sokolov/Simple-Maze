@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/320140/
-public class SidewinderThin : WalledMaze
+public class SidewinderThin : WalledMaze, MazeGenerator
 {
+    public void Generate() { while (NextStep()) ; }
+    public void Init(Maze TargetMaze) { }
+
     private const float horChance = 0.6f;
 
     private int rowStart;
@@ -21,7 +24,7 @@ public class SidewinderThin : WalledMaze
         rowStart = 0;
     }
 
-    public override bool NextStep()
+    public bool NextStep()
     {
         SetPass(CurrentCell, true);
         var next = CurrentCell + IntVector2.East;

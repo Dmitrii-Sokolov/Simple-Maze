@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/321210/
-public class AldousBroderThin : WalledMaze
+public class AldousBroderThin : WalledMaze, MazeGenerator
 {
+    public void Generate() { while (NextStep()) ; }
+    public void Init(Maze TargetMaze) { }
+
     public AldousBroderThin(int width, int height)
     {
         SetSize(width, height);
@@ -18,7 +21,7 @@ public class AldousBroderThin : WalledMaze
         cells = Width * Height - 1;
     }
 
-    public override bool NextStep()
+    public bool NextStep()
     {
         SetPass(CurrentCell, true);
         var choices = new List<IntVector2>();

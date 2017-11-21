@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeepSearchThick : CellMaze
+public class DeepSearchThick : CellMaze, MazeGenerator
 {
+    public void Generate() { while (NextStep()) ; }
+    public void Init(Maze TargetMaze) { }
+
     public DeepSearchThick(int width, int height)
     {
         SetSize(width, height);
@@ -23,7 +26,7 @@ public class DeepSearchThick : CellMaze
                 nodeDegrees[i, n] = 0;
     }
   
-    public override bool NextStep()
+    public bool NextStep()
     {
         if (!GetPass(CurrentCell))
         {

@@ -32,7 +32,7 @@ public class GenerateToggle : MonoBehaviour {
         if (group == null)
             Debug.LogError("GenerateToggle : group isn't set");
 
-        foreach (TextureGenerator.GenerateType element in Enum.GetValues(typeof(TextureGenerator.GenerateType)))
+        foreach (MazeGeneratorType element in Enum.GetValues(typeof(MazeGeneratorType)))
         {
             var newButton = Instantiate(togglePrefab, listRoot);
             newButton.GetComponentInChildren<Text>().text = element.ToString();

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class WalledMaze : CellMaze
+public class WalledMaze : CellMaze
 {
     private const int RoomSize = 2;
     private const int WallSize = 1;
@@ -148,8 +148,6 @@ public abstract class WalledMaze : CellMaze
                 horPasses[i, n] = false;
     }
 
-    public abstract override bool NextStep();
-
     protected void PaintTemp(IntVector2 cell, bool temp)
     {
         Texture.SetPixels((WallSize + RoomSize) * cell.x + WallSize, (WallSize + RoomSize) * cell.y + WallSize, RoomSize, RoomSize, temp ? RoomTemp : GetPass(cell) ? RoomEmpty : RoomFull);
@@ -189,7 +187,7 @@ public abstract class WalledMaze : CellMaze
                     Texture.SetPixel((WallSize + RoomSize) * (1 + Mathf.Min(cell.x, to.x)) + i, (WallSize + RoomSize) * cell.y + WallSize + n, color);
         }
     }
-    protected void SetTunnel(IntVector2 cell, IntVector2 to, bool tunnel)
+    public override void SetTunnel(IntVector2 cell, IntVector2 to, bool tunnel)
     {
         if ((to.x - cell.x) == 0)
         {
@@ -205,7 +203,7 @@ public abstract class WalledMaze : CellMaze
         }
     }
 
-    protected bool GetTunnel(IntVector2 cell, IntVector2 to)
+    public override bool GetTunnel(IntVector2 cell, IntVector2 to)
     {
         if ((to.x - cell.x) == 0)
             return vertPasses[cell.x, Mathf.Min(cell.y, to.y)];
