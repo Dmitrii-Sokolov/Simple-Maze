@@ -13,7 +13,11 @@ public class RecursiveUnionThin : MazeGenerator
     public void Init(Maze TargetMaze)
     {
         maze = TargetMaze;
-        //CurrentCell = new IntVector2(-1, -1);
+        Init();
+    }
+
+    public void Init()
+    {
         rects.Clear();
         rects.Enqueue(new IntRect(new IntVector2(0, 0), new IntVector2(maze.Width - 1, maze.Height - 1)));
     }

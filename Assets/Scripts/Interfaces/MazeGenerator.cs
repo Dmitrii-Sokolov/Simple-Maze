@@ -18,25 +18,25 @@ public static class MazeGeneratorExtensions
             case MazeGeneratorType.RecursiveUnion:
                 return new RecursiveUnionThin();
             case MazeGeneratorType.Prim:
-                return new PrimThin(width, height);
+                return new PrimThin();
             case MazeGeneratorType.Kruskal:
-                return new KruskalThin(width, height);
+                return new KruskalThin();
             case MazeGeneratorType.Wilson:
-                return new WilsonThin(width, height);
+                return new WilsonThin();
             case MazeGeneratorType.AldousBroder:
-                return new AldousBroderThin(width, height);
+                return new AldousBroderThin();
             case MazeGeneratorType.HuntAndKill:
-                return new HuntAndKillThin(width, height);
+                return new HuntAndKillThin();
             case MazeGeneratorType.Sidewinder:
-                return new SidewinderThin(width, height);
+                return new SidewinderThin();
             case MazeGeneratorType.BinaryTree:
-                return new BinaryTreeThin(width, height);
+                return new BinaryTreeThin();
             case MazeGeneratorType.DeepSearch:
-                return new DeepSearchThin(width, height);
+                return new DeepSearchThin();
             case MazeGeneratorType.DeepSearchT:
-                return new DeepSearchThick(width, height);
+                return new DeepSearchThick();
             case MazeGeneratorType.RandomString:
-                return new RandomStringThin(width, height);
+                return new RandomStringThin();
             default:
                 Debug.LogError("Unknown Maze Generator Type: " + type);
                 return null;
@@ -47,6 +47,7 @@ public static class MazeGeneratorExtensions
 public interface MazeGenerator
 {
     void Init(Maze TargetMaze);
+    void Init();
     void Generate();
     bool NextStep();
 }

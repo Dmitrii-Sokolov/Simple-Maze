@@ -3,44 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/321210/
-public class AldousBroderThin : WalledMaze, MazeGenerator
+public class AldousBroderThin : MazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    public void Init(Maze TargetMaze) { }
 
-    public AldousBroderThin(int width, int height)
-    {
-        SetSize(width, height);
-    }
-
+    private Maze maze;
     private int cells;
 
-    public override void Clear()
+    public void Init(Maze TargetMaze)
     {
-        base.Clear();
-        cells = Width * Height - 1;
+        maze = TargetMaze;
+        Init();
+    }
+
+    public void Init()
+    {
+        cells = maze.Width * maze.Height - 1;
     }
 
     public bool NextStep()
     {
-        SetPass(CurrentCell, true);
+        maze.SetPass(maze.CurrentCell, true);
         var choices = new List<IntVector2>();
 
-        foreach (var item in shifts)
+        foreach (var item in IntVector2.Shifts)
         {
-            var adj = CurrentCell + item;
-            if (InMaze(adj))
+            var adj = maze.CurrentCell + item;
+            if (maze.InMaze(adj))
                 choices.Add(adj);
         }
 
         var index = Random.Range(0, choices.Count);
-        if (!GetPass(choices[index]))
+        if (!maze.GetPass(choices[index]))
         {
-            SetTunnel(CurrentCell, choices[index], true);
+            maze.SetTunnel(maze.CurrentCell, choices[index], true);
             cells--;
         }
 
-        CurrentCell = choices[index];
+        maze.CurrentCell = choices[index];
         return (cells != 0);
     }
 }

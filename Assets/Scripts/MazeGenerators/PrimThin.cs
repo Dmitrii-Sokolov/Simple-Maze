@@ -4,14 +4,32 @@ using System.Linq;
 using UnityEngine;
 
 //https://ru.wikipedia.org/wiki/Алгоритм_Прима
-public class PrimThin : WalledMaze, MazeGenerator
+public class PrimThin : MazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    public void Init(Maze TargetMaze) { }
+    private Maze maze;
 
-    public PrimThin(int width, int height)
+    public void Init(Maze TargetMaze)
     {
-        SetSize(width, height);
+        maze = TargetMaze;
+        Init();
+    }
+
+    public void Init()
+    {
+
+        Ratios.Clear();
+        cells = maze.Width * maze.Height - 1;
+
+        vertRatios = new float[maze.Width, maze.Height - 1];
+        for (int i = 0; i < maze.Width; i++)
+            for (int n = 0; n < maze.Height - 1; n++)
+                vertRatios[i, n] = Random.value;
+
+        horRatios = new float[maze.Width - 1, maze.Height];
+        for (int i = 0; i < maze.Width - 1; i++)
+            for (int n = 0; n < maze.Height; n++)
+                horRatios[i, n] = Random.value;
     }
 
     private LinkedList<Edge> Ratios = new LinkedList<Edge>();
@@ -19,44 +37,27 @@ public class PrimThin : WalledMaze, MazeGenerator
     private float[,] horRatios;
     private int cells;
 
-    public override void Clear()
-    {
-        base.Clear();
-        Ratios.Clear();
-        cells = Width * Height - 1;
-
-        vertRatios = new float[Width, Height - 1];
-        for (int i = 0; i < Width; i++)
-            for (int n = 0; n < Height - 1; n++)
-                vertRatios[i, n] = Random.value;
-
-        horRatios = new float[Width - 1, Height];
-        for (int i = 0; i < Width - 1; i++)
-            for (int n = 0; n < Height; n++)
-                horRatios[i, n] = Random.value;
-    }
-
     public bool NextStep()
     {
-        SetPass(CurrentCell, true);
+        maze.SetPass(maze.CurrentCell, true);
         if (cells == 0)
             return false;
 
-        foreach (var item in shifts)
+        foreach (var item in IntVector2.Shifts)
         {
-            var adj = CurrentCell + item;
-            if (InMaze(adj))
-                if (!GetPass(adj))
-                    Ratios.AddLast(new Edge(CurrentCell, adj, GetRatio(CurrentCell, adj)));
+            var adj = maze.CurrentCell + item;
+            if (maze.InMaze(adj))
+                if (!maze.GetPass(adj))
+                    Ratios.AddLast(new Edge(maze.CurrentCell, adj, GetRatio(maze.CurrentCell, adj)));
         }
 
         var ration = Ratios.Min();
 
-        SetTunnel(ration.from, ration.to, true);
-        CurrentCell = ration.to;
+        maze.SetTunnel(ration.from, ration.to, true);
+        maze.CurrentCell = ration.to;
         cells--;
 
-        var trash = Ratios.Where(c => c.to == CurrentCell).ToArray();
+        var trash = Ratios.Where(c => c.to == maze.CurrentCell).ToArray();
         foreach (var item in trash)
             Ratios.Remove(item);
 

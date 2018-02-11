@@ -3,37 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/320140/
-public class BinaryTreeThin : WalledMaze, MazeGenerator
+public class BinaryTreeThin : MazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    public void Init(Maze TargetMaze) { }
+    private Maze maze;
+
+    public void Init(Maze TargetMaze)
+    {
+        maze = TargetMaze;
+        Init();
+    }
+
+    public void Init()
+    {
+        maze.CurrentCell = new IntVector2(0, 0);
+    }
 
     private static List<IntVector2> shiftsSimple = new List<IntVector2>()
     {
         IntVector2.East, IntVector2.North
     };
 
-    public BinaryTreeThin(int width, int height)
-    {
-        SetSize(width, height);
-    }
-
-    public override void Clear()
-    {
-        base.Clear();
-        CurrentCell = new IntVector2(0, 0);
-    }
-
     public bool NextStep()
     {
-        SetPass(CurrentCell, true);
+        maze.SetPass(maze.CurrentCell, true);
         var choices = new List<IntVector2>();
 
         foreach (var item in shiftsSimple)
         {
-            var adj = CurrentCell + item;
-            if (InMaze(adj))
-                if (!GetPass(adj))
+            var adj = maze.CurrentCell + item;
+            if (maze.InMaze(adj))
+                if (!maze.GetPass(adj))
                     choices.Add(adj);
         }
 
@@ -42,10 +42,10 @@ public class BinaryTreeThin : WalledMaze, MazeGenerator
         else
         {
             var index = Random.Range(0, choices.Count);
-            SetTunnel(CurrentCell, choices[index], true);
-            CurrentCell += shiftsSimple[0];
-            if (!InMaze(CurrentCell))
-                CurrentCell = new IntVector2(0, CurrentCell.y + 1);
+            maze.SetTunnel(maze.CurrentCell, choices[index], true);
+            maze.CurrentCell += shiftsSimple[0];
+            if (!maze.InMaze(maze.CurrentCell))
+                maze.CurrentCell = new IntVector2(0, maze.CurrentCell.y + 1);
         }
 
         return true;

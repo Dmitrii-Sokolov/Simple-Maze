@@ -3,44 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://wiki.roblox.com/index.php/Hunt-and-Kill
-public class HuntAndKillThin : WalledMaze, MazeGenerator
+public class HuntAndKillThin : MazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    public void Init(Maze TargetMaze) { }
+    private Maze maze;
 
-    public HuntAndKillThin(int width, int height)
+    public void Init(Maze TargetMaze)
     {
-        SetSize(width, height);
+        maze = TargetMaze;
+        Init();
     }
+
+    public void Init() { }
+
 
     public bool NextStep()
     {
-        SetPass(CurrentCell, true);
+        maze.SetPass(maze.CurrentCell, true);
         var choices = new List<IntVector2>();
 
-        foreach (var item in shifts)
+        foreach (var item in IntVector2.Shifts)
         {
-            var adj = CurrentCell + item;
-            if (InMaze(adj))
-                if (!GetPass(adj))
+            var adj = maze.CurrentCell + item;
+            if (maze.InMaze(adj))
+                if (!maze.GetPass(adj))
                     choices.Add(adj);
         }
 
         if (choices.Count == 0)
         {
-            for (int i = 0; i < Width; i++)
-                for (int n = 0; n < Height; n++)
+            for (int i = 0; i < maze.Width; i++)
+                for (int n = 0; n < maze.Height; n++)
                 {
                     var hunter = new IntVector2(i, n);
-                    if (!GetPass(hunter))
-                        foreach (var item in shifts)
+                    if (!maze.GetPass(hunter))
+                        foreach (var item in IntVector2.Shifts)
                         {
                             var adj = hunter + item;
-                            if (InMaze(adj))
-                                if (GetPass(adj))
+                            if (maze.InMaze(adj))
+                                if (maze.GetPass(adj))
                                 {
-                                    SetTunnel(hunter, adj, true);
-                                    CurrentCell = hunter;
+                                    maze.SetTunnel(hunter, adj, true);
+                                    maze.CurrentCell = hunter;
                                     return true;
                                 }
                         }
@@ -49,8 +53,8 @@ public class HuntAndKillThin : WalledMaze, MazeGenerator
         else
         {
             var index = Random.Range(0, choices.Count);
-            SetTunnel(CurrentCell, choices[index], true);
-            CurrentCell = choices[index];
+            maze.SetTunnel(maze.CurrentCell, choices[index], true);
+            maze.CurrentCell = choices[index];
             return true;
         }
 

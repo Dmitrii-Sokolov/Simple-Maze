@@ -2,34 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeepSearchThin : WalledMaze, MazeGenerator
+public class DeepSearchThin : MazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    public void Init(Maze TargetMaze) { }
-
-    public DeepSearchThin(int width, int height)
-    {
-        SetSize(width, height);
-    }
+    private Maze maze;
 
     private Stack<IntVector2> MazeTrace = new Stack<IntVector2>();
 
-    public override void Clear()
+    public void Init(Maze TargetMaze)
     {
-        base.Clear();
+        maze = TargetMaze;
+        Init();
+    }
+
+    public void Init()
+    {
         MazeTrace.Clear();
     }
 
     public bool NextStep()
     {
-        SetPass(CurrentCell, true);
+        maze.SetPass(maze.CurrentCell, true);
         var choices = new List<IntVector2>();
 
-        foreach (var item in shifts)
+        foreach (var item in IntVector2.Shifts)
         {
-            var adj = CurrentCell + item;
-            if (InMaze(adj))
-                if (!GetPass(adj))
+            var adj = maze.CurrentCell + item;
+            if (maze.InMaze(adj))
+                if (!maze.GetPass(adj))
                     choices.Add(adj);
         }
 
@@ -38,14 +38,14 @@ public class DeepSearchThin : WalledMaze, MazeGenerator
             if (MazeTrace.Count == 0)
                 return false;
             else
-                CurrentCell = MazeTrace.Pop();
+                maze.CurrentCell = MazeTrace.Pop();
         }
         else
         {
             var index = Random.Range(0, choices.Count);
-            MazeTrace.Push(CurrentCell);
-            SetTunnel(CurrentCell, choices[index], true);
-            CurrentCell = choices[index];
+            MazeTrace.Push(maze.CurrentCell);
+            maze.SetTunnel(maze.CurrentCell, choices[index], true);
+            maze.CurrentCell = choices[index];
         }
 
         return true;

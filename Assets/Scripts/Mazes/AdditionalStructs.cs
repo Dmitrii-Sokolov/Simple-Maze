@@ -85,6 +85,11 @@ public struct IntVector2
     public static readonly IntVector2 North = new IntVector2(0, 1);
     public static readonly IntVector2 South = new IntVector2(0, -1);
 
+    public static List<IntVector2> Shifts = new List<IntVector2>()
+    {
+        IntVector2.East, IntVector2.North, IntVector2.West, IntVector2.South
+    };
+
     public IntVector2(int x, int y)
     {
         this.x = x;

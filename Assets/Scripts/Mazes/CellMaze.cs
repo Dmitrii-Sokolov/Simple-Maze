@@ -4,23 +4,37 @@ using UnityEngine;
 
 public class CellMaze : Maze
 {
-    protected static List<IntVector2> shifts = new List<IntVector2>()
+    public CellMaze() { }
+
+    public CellMaze(int width, int height)
     {
-        IntVector2.East, IntVector2.North, IntVector2.West, IntVector2.South
-    };
+        SetSize(width, height);
+    }
 
     private MazeGenerator generator { set; get; }
-    public MazeGenerator Generator { set { Clear(); generator = value; generator.Init(this); } get { return generator; } }
+    public MazeGenerator Generator
+    {
+        set
+        {
+            Clear();
+            generator = value;
+            generator.Init(this);
+        }
+        get
+        {
+            return generator;
+        }
+    }
 
     protected static Color Temprorary = Color.yellow;
     protected static Color Rig = Color.red;
     protected static Color Full = Color.black;
     protected static Color Empty = Color.blue;
     protected static Color MinRangeColor = Color.green;
-    protected static Color MaxRangeColor = new Color(0f, 0.1f, 0f);
+    protected static Color MaxRangeColor = 0.1f * Color.green;
 
-    protected IntVector2 currentCell;
-    protected virtual IntVector2 CurrentCell
+    public IntVector2 currentCell;
+    public virtual IntVector2 CurrentCell
     {
         set
         {
@@ -85,7 +99,7 @@ public class CellMaze : Maze
         while (stepsQueue.Count > 0)
         {
             var from = stepsQueue.Dequeue();
-            foreach (var item in shifts)
+            foreach (var item in IntVector2.Shifts)
             {
                 var adj = from + item;
                 if (InMaze(adj))
@@ -129,9 +143,12 @@ public class CellMaze : Maze
                 passes[i, n] = false;
 
         CurrentCell = new IntVector2(Random.Range(0, Width), Random.Range(0, Height));
+
+        if (Generator != null)
+            Generator.Init(this);
     }
 
-    protected bool InMaze(IntVector2 cell)
+    public bool InMaze(IntVector2 cell)
     {
         return ((cell.x < Width) && (cell.x >= 0) && (cell.y < Height) && (cell.y >= 0));
     }
@@ -145,17 +162,22 @@ public class CellMaze : Maze
         }
     }
 
+    public virtual void PaintTemp(IntVector2 cell, bool temp)
+    {
+        PaintCell(cell, temp ? Temprorary : GetPass(cell) ? Empty : Full);
+    }
+
     protected virtual void PaintCell(IntVector2 cell, Color color)
     {
         Texture.SetPixel(cell.x, cell.y, color);
     }
 
-    protected virtual void PaintCell(IntVector2 cell)
+    public virtual void PaintCell(IntVector2 cell)
     {
         Texture.SetPixel(cell.x, cell.y, GetPass(cell) ? Empty : Full);
     }
 
-    protected virtual void PaintRig(IntVector2 cell)
+    public virtual void PaintRig(IntVector2 cell)
     {
         Texture.SetPixel(cell.x, cell.y, Rig);
     }

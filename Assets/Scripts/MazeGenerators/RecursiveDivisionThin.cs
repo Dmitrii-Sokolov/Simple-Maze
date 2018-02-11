@@ -7,10 +7,15 @@ public class RecursiveDivisionThin : MazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
     private Maze maze;
+
     public void Init(Maze TargetMaze)
     {
         maze = TargetMaze;
+        Init();
+    }
 
+    public void Init()
+    {
         rects.Clear();
 
         for (int i = 0; i < maze.Width; i++)

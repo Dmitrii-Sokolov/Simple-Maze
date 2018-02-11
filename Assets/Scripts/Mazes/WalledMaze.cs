@@ -72,7 +72,7 @@ public class WalledMaze : CellMaze
         while (stepsQueue.Count > 0)
         {
             var from = stepsQueue.Dequeue();
-            foreach (var item in shifts)
+            foreach (var item in IntVector2.Shifts)
             {
                 var adj = from + item;
                 if (InMaze(adj))
@@ -148,7 +148,7 @@ public class WalledMaze : CellMaze
                 horPasses[i, n] = false;
     }
 
-    protected void PaintTemp(IntVector2 cell, bool temp)
+    public override void PaintTemp(IntVector2 cell, bool temp)
     {
         Texture.SetPixels((WallSize + RoomSize) * cell.x + WallSize, (WallSize + RoomSize) * cell.y + WallSize, RoomSize, RoomSize, temp ? RoomTemp : GetPass(cell) ? RoomEmpty : RoomFull);
     }
@@ -160,12 +160,12 @@ public class WalledMaze : CellMaze
                 Texture.SetPixel((WallSize + RoomSize) * cell.x + WallSize + i, (WallSize + RoomSize) * cell.y + WallSize + n, color);
     }
 
-    protected override void PaintCell(IntVector2 cell)
+    public override void PaintCell(IntVector2 cell)
     {
         Texture.SetPixels((WallSize + RoomSize) * cell.x + WallSize, (WallSize + RoomSize) * cell.y + WallSize, RoomSize, RoomSize, GetPass(cell) ? RoomEmpty : RoomFull);
     }
 
-    protected override void PaintRig(IntVector2 cell)
+    public override void PaintRig(IntVector2 cell)
     {
         Texture.SetPixels((WallSize + RoomSize) * cell.x + WallSize, (WallSize + RoomSize) * cell.y + WallSize, RoomSize, RoomSize, RoomRig);
     }

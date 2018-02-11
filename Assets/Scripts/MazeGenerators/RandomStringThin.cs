@@ -3,50 +3,50 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/251631/
-public class RandomStringThin : WalledMaze, MazeGenerator
+public class RandomStringThin : MazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    public void Init(Maze TargetMaze) { }
+    private Maze maze;
 
-    public RandomStringThin(int width, int height)
+    public void Init(Maze TargetMaze)
     {
-        SetSize(width, height);
+        maze = TargetMaze;
+        Init();
     }
 
-    public override void Clear()
+    public void Init()
     {
-        base.Clear();
-        CurrentCell = new IntVector2(0, 0);
+        maze.CurrentCell = new IntVector2(0, 0);
     }
 
     public bool NextStep()
     {
         if (Random.value > 0.5f)
         {
-            SetQuad(CurrentCell, CurrentCell + IntVector2.East);
-            SetQuad(CurrentCell + IntVector2.North, CurrentCell + IntVector2.East + IntVector2.North);
+            SetQuad(maze.CurrentCell, maze.CurrentCell + IntVector2.East);
+            SetQuad(maze.CurrentCell + IntVector2.North, maze.CurrentCell + IntVector2.East + IntVector2.North);
         }
         else
         {
-            SetQuad(CurrentCell, CurrentCell + IntVector2.North);
-            SetQuad(CurrentCell + IntVector2.East, CurrentCell + IntVector2.East + IntVector2.North);
+            SetQuad(maze.CurrentCell, maze.CurrentCell + IntVector2.North);
+            SetQuad(maze.CurrentCell + IntVector2.East, maze.CurrentCell + IntVector2.East + IntVector2.North);
         }
 
-        CurrentCell = new IntVector2(CurrentCell.x + 2, CurrentCell.y);
-        if (!InMaze(CurrentCell))
-            CurrentCell = new IntVector2((CurrentCell.y + 1) % 2, CurrentCell.y + 1);
+        maze.CurrentCell = new IntVector2(maze.CurrentCell.x + 2, maze.CurrentCell.y);
+        if (!maze.InMaze(maze.CurrentCell))
+            maze.CurrentCell = new IntVector2((maze.CurrentCell.y + 1) % 2, maze.CurrentCell.y + 1);
 
-        return InMaze(CurrentCell);
+        return maze.InMaze(maze.CurrentCell);
     }
 
 
     public void SetQuad(IntVector2 cell1, IntVector2 cell2)
     {
-        if (InMaze(cell1) && InMaze(cell2))
+        if (maze.InMaze(cell1) && maze.InMaze(cell2))
         {
-            SetPass(cell1, true);
-            SetPass(cell2, true);
-            SetTunnel(cell1, cell2, true);
+            maze.SetPass(cell1, true);
+            maze.SetPass(cell2, true);
+            maze.SetTunnel(cell1, cell2, true);
         }
     }
 }
