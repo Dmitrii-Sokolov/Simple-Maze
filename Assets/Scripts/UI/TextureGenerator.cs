@@ -58,12 +58,12 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
             SizeInput.onValueChanged.AddListener(c => Size = (int)c);
     }
 
-    public void SetType(MazeGeneratorType type)
+    public void SetType(Type type)
     {
         Maze = new WalledMaze(Size, Size);
 
         NeedRedraw = true;
-        Maze.Generator = MazeGeneratorExtensions.CreateGenerator(type, Size, Size);
+        Maze.Generator = (MazeGenerator) Activator.CreateInstance(type);
     }
 
     public void Command(CommandType command)

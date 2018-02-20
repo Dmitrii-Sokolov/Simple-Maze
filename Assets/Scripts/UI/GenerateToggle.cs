@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
+using System.Reflection;
 
 public class GenerateToggle : MonoBehaviour {
 
@@ -32,7 +34,8 @@ public class GenerateToggle : MonoBehaviour {
         if (group == null)
             Debug.LogError("GenerateToggle : group isn't set");
 
-        foreach (MazeGeneratorType element in Enum.GetValues(typeof(MazeGeneratorType)))
+        var mazeGeneratorTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetInterfaces().Contains(typeof(MazeGenerator))).ToArray();
+        foreach (var element in mazeGeneratorTypes)
         {
             var newButton = Instantiate(togglePrefab, listRoot);
             newButton.GetComponentInChildren<Text>().text = element.ToString();
