@@ -26,7 +26,7 @@ public class WilsonThin : MazeGenerator
                 OldCells[i, n] = -1;
     }
 
-    private List<IntVector2> MazeTrace = new List<IntVector2>();
+    private List<Vector2Int> MazeTrace = new List<Vector2Int>();
     private int cells;
     protected int[,] OldCells;
 
@@ -53,8 +53,8 @@ public class WilsonThin : MazeGenerator
             }
             else
             {
-                var choices = new List<IntVector2>();
-                foreach (var item in IntVector2.Shifts)
+                var choices = new List<Vector2Int>();
+                foreach (var item in CellMaze.Shifts)
                 {
                     var adj = maze.CurrentCell + item;
                     if (MazeTrace.Count < 2 || MazeTrace[MazeTrace.Count - 2] != adj)
@@ -91,9 +91,9 @@ public class WilsonThin : MazeGenerator
         var index = Random.Range(0, cells);
         for (int i = 0; i < maze.Width; i++)
             for (int n = 0; n < maze.Height; n++)
-                if (!maze.GetPass(new IntVector2(i, n)))
+                if (!maze.GetPass(new Vector2Int(i, n)))
                     if (index-- == 0)
-                        maze.CurrentCell = new IntVector2(i, n);
+                        maze.CurrentCell = new Vector2Int(i, n);
     }
 
     private void SetTunnels()

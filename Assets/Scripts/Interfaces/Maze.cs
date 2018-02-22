@@ -15,19 +15,19 @@ public interface Maze
 
     MazeGenerator Generator { set; get; }
     Texture2D Texture {get;}
-    IntVector2 CurrentCell { get; set; }
+    Vector2Int CurrentCell { get; set; }
 
-    void PaintCell(IntVector2 cell);
-    void PaintRig(IntVector2 cell);
-    void PaintTemp(IntVector2 cell, bool temp);
+    void PaintCell(Vector2Int cell);
+    void PaintRig(Vector2Int cell);
+    void PaintTemp(Vector2Int cell, bool temp);
 
-    bool GetPass(IntVector2 cell);
-    void SetPass(IntVector2 cell, bool pass);
+    bool GetPass(Vector2Int cell);
+    void SetPass(Vector2Int cell, bool pass);
 
-    void SetTunnel(IntVector2 cell, IntVector2 to, bool tunnel);
-    bool GetTunnel(IntVector2 cell, IntVector2 to);
+    void SetTunnel(Vector2Int cell, Vector2Int to, bool tunnel);
+    bool GetTunnel(Vector2Int cell, Vector2Int to);
 
-    bool InMaze(IntVector2 cell);
+    bool InMaze(Vector2Int cell);
 
     void Click(Vector2 point);
 }

@@ -20,9 +20,9 @@ public class HuntAndKillThin : MazeGenerator
     public bool NextStep()
     {
         maze.SetPass(maze.CurrentCell, true);
-        var choices = new List<IntVector2>();
+        var choices = new List<Vector2Int>();
 
-        foreach (var item in IntVector2.Shifts)
+        foreach (var item in CellMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))
@@ -35,9 +35,9 @@ public class HuntAndKillThin : MazeGenerator
             for (int i = 0; i < maze.Width; i++)
                 for (int n = 0; n < maze.Height; n++)
                 {
-                    var hunter = new IntVector2(i, n);
+                    var hunter = new Vector2Int(i, n);
                     if (!maze.GetPass(hunter))
-                        foreach (var item in IntVector2.Shifts)
+                        foreach (var item in CellMaze.Shifts)
                         {
                             var adj = hunter + item;
                             if (maze.InMaze(adj))

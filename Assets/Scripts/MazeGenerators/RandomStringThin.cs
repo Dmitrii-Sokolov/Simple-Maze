@@ -16,31 +16,31 @@ public class RandomStringThin : MazeGenerator
 
     public void Init()
     {
-        maze.CurrentCell = new IntVector2(0, 0);
+        maze.CurrentCell = new Vector2Int(0, 0);
     }
 
     public bool NextStep()
     {
         if (Random.value > 0.5f)
         {
-            SetQuad(maze.CurrentCell, maze.CurrentCell + IntVector2.East);
-            SetQuad(maze.CurrentCell + IntVector2.North, maze.CurrentCell + IntVector2.East + IntVector2.North);
+            SetQuad(maze.CurrentCell, maze.CurrentCell + Vector2Int.right);
+            SetQuad(maze.CurrentCell + Vector2Int.up, maze.CurrentCell + Vector2Int.right + Vector2Int.up);
         }
         else
         {
-            SetQuad(maze.CurrentCell, maze.CurrentCell + IntVector2.North);
-            SetQuad(maze.CurrentCell + IntVector2.East, maze.CurrentCell + IntVector2.East + IntVector2.North);
+            SetQuad(maze.CurrentCell, maze.CurrentCell + Vector2Int.up);
+            SetQuad(maze.CurrentCell + Vector2Int.right, maze.CurrentCell + Vector2Int.right + Vector2Int.up);
         }
 
-        maze.CurrentCell = new IntVector2(maze.CurrentCell.x + 2, maze.CurrentCell.y);
+        maze.CurrentCell = new Vector2Int(maze.CurrentCell.x + 2, maze.CurrentCell.y);
         if (!maze.InMaze(maze.CurrentCell))
-            maze.CurrentCell = new IntVector2((maze.CurrentCell.y + 1) % 2, maze.CurrentCell.y + 1);
+            maze.CurrentCell = new Vector2Int((maze.CurrentCell.y + 1) % 2, maze.CurrentCell.y + 1);
 
         return maze.InMaze(maze.CurrentCell);
     }
 
 
-    public void SetQuad(IntVector2 cell1, IntVector2 cell2)
+    public void SetQuad(Vector2Int cell1, Vector2Int cell2)
     {
         if (maze.InMaze(cell1) && maze.InMaze(cell2))
         {

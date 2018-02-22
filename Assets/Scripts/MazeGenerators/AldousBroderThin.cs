@@ -24,9 +24,9 @@ public class AldousBroderThin : MazeGenerator
     public bool NextStep()
     {
         maze.SetPass(maze.CurrentCell, true);
-        var choices = new List<IntVector2>();
+        var choices = new List<Vector2Int>();
 
-        foreach (var item in IntVector2.Shifts)
+        foreach (var item in CellMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))

@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class CellMaze : Maze
 {
+    public static Vector2Int[] Shifts = new Vector2Int[4]
+    {
+        Vector2Int.right, Vector2Int.up, Vector2Int.left, Vector2Int.down
+    };
+
     public CellMaze() { }
 
     public CellMaze(int width, int height)
@@ -33,8 +38,8 @@ public class CellMaze : Maze
     protected static Color MinRangeColor = Color.green;
     protected static Color MaxRangeColor = 0.1f * Color.green;
 
-    public IntVector2 currentCell;
-    public virtual IntVector2 CurrentCell
+    public Vector2Int currentCell;
+    public virtual Vector2Int CurrentCell
     {
         set
         {
@@ -60,16 +65,16 @@ public class CellMaze : Maze
 
     protected bool[,] passes;
     protected int[,] steps;
-    protected Queue<IntVector2> stepsQueue = new Queue<IntVector2>();
+    protected Queue<Vector2Int> stepsQueue = new Queue<Vector2Int>();
     protected int maxRange;
 
     public virtual void Click(Vector2 point)
     {
-        var localPoint = new IntVector2(Mathf.FloorToInt(point.x * Width), Mathf.FloorToInt(point.y * Height));
+        var localPoint = new Vector2Int(Mathf.FloorToInt(point.x * Width), Mathf.FloorToInt(point.y * Height));
         OnRoomClick(localPoint);
     }
 
-    protected virtual void OnRoomClick(IntVector2 point)
+    protected virtual void OnRoomClick(Vector2Int point)
     {
         if (InMaze(point) && GetPass(point))
         {
@@ -99,7 +104,7 @@ public class CellMaze : Maze
         while (stepsQueue.Count > 0)
         {
             var from = stepsQueue.Dequeue();
-            foreach (var item in IntVector2.Shifts)
+            foreach (var item in CellMaze.Shifts)
             {
                 var adj = from + item;
                 if (InMaze(adj))
@@ -119,7 +124,7 @@ public class CellMaze : Maze
         for (int i = 0; i < Width; i++)
             for (int n = 0; n < Height; n++)
                 if (steps[i, n] != -1)
-                    PaintCell(new IntVector2(i, n), Color.Lerp(MinRangeColor, MaxRangeColor, steps[i, n] / ((float)maxRange)));
+                    PaintCell(new Vector2Int(i, n), Color.Lerp(MinRangeColor, MaxRangeColor, steps[i, n] / ((float)maxRange)));
     }
 
     public virtual void SetSize(int width, int height)
@@ -142,18 +147,18 @@ public class CellMaze : Maze
             for (int n = 0; n < Height; n++)
                 passes[i, n] = false;
 
-        CurrentCell = new IntVector2(Random.Range(0, Width), Random.Range(0, Height));
+        CurrentCell = new Vector2Int(Random.Range(0, Width), Random.Range(0, Height));
 
         if (Generator != null)
             Generator.Init(this);
     }
 
-    public bool InMaze(IntVector2 cell)
+    public bool InMaze(Vector2Int cell)
     {
         return ((cell.x < Width) && (cell.x >= 0) && (cell.y < Height) && (cell.y >= 0));
     }
 
-    public virtual void SetPass(IntVector2 cell, bool pass)
+    public virtual void SetPass(Vector2Int cell, bool pass)
     {
         if (passes[cell.x, cell.y] != pass)
         {
@@ -162,37 +167,37 @@ public class CellMaze : Maze
         }
     }
 
-    public virtual void PaintTemp(IntVector2 cell, bool temp)
+    public virtual void PaintTemp(Vector2Int cell, bool temp)
     {
         PaintCell(cell, temp ? Temprorary : GetPass(cell) ? Empty : Full);
     }
 
-    protected virtual void PaintCell(IntVector2 cell, Color color)
+    protected virtual void PaintCell(Vector2Int cell, Color color)
     {
         Texture.SetPixel(cell.x, cell.y, color);
     }
 
-    public virtual void PaintCell(IntVector2 cell)
+    public virtual void PaintCell(Vector2Int cell)
     {
         Texture.SetPixel(cell.x, cell.y, GetPass(cell) ? Empty : Full);
     }
 
-    public virtual void PaintRig(IntVector2 cell)
+    public virtual void PaintRig(Vector2Int cell)
     {
         Texture.SetPixel(cell.x, cell.y, Rig);
     }
 
-    public bool GetPass(IntVector2 cell)
+    public bool GetPass(Vector2Int cell)
     {
         return passes[cell.x, cell.y];
     }
 
-    public virtual void SetTunnel(IntVector2 cell, IntVector2 to, bool tunnel)
+    public virtual void SetTunnel(Vector2Int cell, Vector2Int to, bool tunnel)
     {
         throw new System.NotImplementedException();
     }
 
-    public virtual bool GetTunnel(IntVector2 cell, IntVector2 to)
+    public virtual bool GetTunnel(Vector2Int cell, Vector2Int to)
     {
         throw new System.NotImplementedException();
     }

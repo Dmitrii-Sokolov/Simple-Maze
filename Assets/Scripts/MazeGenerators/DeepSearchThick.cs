@@ -23,7 +23,7 @@ public class DeepSearchThick : MazeGenerator
                 nodeDegrees[i, n] = 0;
     }
 
-    private Stack<IntVector2> MazeTrace = new Stack<IntVector2>();
+    private Stack<Vector2Int> MazeTrace = new Stack<Vector2Int>();
     private sbyte[,] nodeDegrees;
 
     public bool NextStep()
@@ -31,7 +31,7 @@ public class DeepSearchThick : MazeGenerator
         if (!maze.GetPass(maze.CurrentCell))
         {
             maze.SetPass(maze.CurrentCell, true);
-            foreach (var item in IntVector2.Shifts)
+            foreach (var item in CellMaze.Shifts)
             {
                 var adj = maze.CurrentCell + item;
                 if (maze.InMaze(adj))
@@ -39,9 +39,9 @@ public class DeepSearchThick : MazeGenerator
             }
         }
 
-        var choices = new List<IntVector2>();
+        var choices = new List<Vector2Int>();
 
-        foreach (var item in IntVector2.Shifts)
+        foreach (var item in CellMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))
@@ -67,12 +67,12 @@ public class DeepSearchThick : MazeGenerator
         return true;
     }
 
-    private sbyte GetDegree(IntVector2 cell)
+    private sbyte GetDegree(Vector2Int cell)
     {
         return nodeDegrees[cell.x, cell.y];
     }
 
-    private void DegreeIncrease(IntVector2 cell, sbyte count)
+    private void DegreeIncrease(Vector2Int cell, sbyte count)
     {
         nodeDegrees[cell.x, cell.y] += count;
     }

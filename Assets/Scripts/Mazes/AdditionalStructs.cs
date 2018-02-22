@@ -4,8 +4,8 @@ using UnityEngine;
 
 public struct IntRect
 {
-    public readonly IntVector2 from;
-    public readonly IntVector2 to;
+    public readonly Vector2Int from;
+    public readonly Vector2Int to;
     public readonly Type type;
 
     public enum Type
@@ -13,7 +13,7 @@ public struct IntRect
         VerticalLine, Vertical, Square, Horizontal, HorizontalLine, Undefined
     }
 
-    public IntRect(IntVector2 from, IntVector2 to)
+    public IntRect(Vector2Int from, Vector2Int to)
     {
         this.from = from;
         this.to = to;
@@ -55,11 +55,11 @@ public struct IntRect
 
 public struct Edge : System.IComparable<Edge>
 {
-    public IntVector2 from;
-    public IntVector2 to;
+    public Vector2Int from;
+    public Vector2Int to;
     public float ratio;
 
-    public Edge(IntVector2 from, IntVector2 to, float ratio)
+    public Edge(Vector2Int from, Vector2Int to, float ratio)
     {
         this.from = from;
         this.to = to;
@@ -77,83 +77,79 @@ public struct Edge : System.IComparable<Edge>
     }
 }
 
-public struct IntVector2
-{
-    public int x, y;
-    public static readonly IntVector2 East = new IntVector2(1, 0);
-    public static readonly IntVector2 West = new IntVector2(-1, 0);
-    public static readonly IntVector2 North = new IntVector2(0, 1);
-    public static readonly IntVector2 South = new IntVector2(0, -1);
+//public struct Vector2Int
+//{
+//    public int x, y;
+//    public static readonly Vector2Int East = new Vector2Int(1, 0);
+//    public static readonly Vector2Int West = new Vector2Int(-1, 0);
+//    public static readonly Vector2Int North = new Vector2Int(0, 1);
+//    public static readonly Vector2Int South = new Vector2Int(0, -1);
 
-    public static List<IntVector2> Shifts = new List<IntVector2>()
-    {
-        IntVector2.East, IntVector2.North, IntVector2.West, IntVector2.South
-    };
 
-    public IntVector2(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
+//    public Vector2Int(int x, int y)
+//    {
+//        this.x = x;
+//        this.y = y;
+//    }
 
-    public override string ToString()
-    {
-        return "(" + x + ", " + y + ")";
-    }
+//    public override string ToString()
+//    {
+//        return "(" + x + ", " + y + ")";
+//    }
 
-    public static bool operator ==(IntVector2 a, IntVector2 b)
-    {
-        return (a.x == b.x) && (a.y == b.y);
-    }
+//    public static bool operator ==(Vector2Int a, Vector2Int b)
+//    {
+//        return (a.x == b.x) && (a.y == b.y);
+//    }
 
-    public static bool operator !=(IntVector2 a, IntVector2 b)
-    {
-        return (a.x != b.x) || (a.y != b.y);
-    }
+//    public static bool operator !=(Vector2Int a, Vector2Int b)
+//    {
+//        return (a.x != b.x) || (a.y != b.y);
+//    }
 
-    public static IntVector2 operator +(IntVector2 a, IntVector2 b)
-    {
-        return new IntVector2(a.x + b.x, a.y + b.y);
-    }
+//    public static Vector2Int operator +(Vector2Int a, Vector2Int b)
+//    {
+//        return new Vector2Int(a.x + b.x, a.y + b.y);
+//    }
 
-    public static IntVector2 operator +(IntVector2 a, Vector2 b)
-    {
-        return new IntVector2(a.x + (int)b.x, a.y + (int)b.y);
-    }
+//    public static Vector2Int operator +(Vector2Int a, Vector2 b)
+//    {
+//        return new Vector2Int(a.x + (int)b.x, a.y + (int)b.y);
+//    }
 
-    public static IntVector2 operator -(IntVector2 a, IntVector2 b)
-    {
-        return new IntVector2(a.x - b.x, a.y - b.y);
-    }
+//    public static Vector2Int operator -(Vector2Int a, Vector2Int b)
+//    {
+//        return new Vector2Int(a.x - b.x, a.y - b.y);
+//    }
 
-    public static IntVector2 operator -(IntVector2 a, Vector2 b)
-    {
-        return new IntVector2(a.x - (int)b.x, a.y - (int)b.y);
-    }
+//    public static Vector2Int operator -(Vector2Int a, Vector2 b)
+//    {
+//        return new Vector2Int(a.x - (int)b.x, a.y - (int)b.y);
+//    }
 
-    public static IntVector2 operator *(IntVector2 a, int b)
-    {
-        return new IntVector2(a.x * b, a.y * b);
-    }
+//    public static Vector2Int operator *(Vector2Int a, int b)
+//    {
+//        return new Vector2Int(a.x * b, a.y * b);
+//    }
 
-    public override bool Equals(object obj)
-    {
-        if (!(obj is IntVector2))
-        {
-            return false;
-        }
+//    public override bool Equals(object obj)
+//    {
+//        if (!(obj is Vector2Int))
+//        {
+//            return false;
+//        }
 
-        var vector = (IntVector2)obj;
-        return x == vector.x &&
-               y == vector.y;
-    }
+//        var vector = (Vector2Int)obj;
+//        return x == vector.x &&
+//               y == vector.y;
+//    }
 
-    public override int GetHashCode()
-    {
-        var hashCode = 1502939027;
-        hashCode = hashCode * -1521134295 + base.GetHashCode();
-        hashCode = hashCode * -1521134295 + x.GetHashCode();
-        hashCode = hashCode * -1521134295 + y.GetHashCode();
-        return hashCode;
-    }
-}
+//    public override int GetHashCode()
+//    {
+//        var hashCode = 1502939027;
+//        hashCode = hashCode * -1521134295 + base.GetHashCode();
+//        hashCode = hashCode * -1521134295 + x.GetHashCode();
+//        hashCode = hashCode * -1521134295 + y.GetHashCode();
+//        return hashCode;
+//    }
+//}

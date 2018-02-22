@@ -28,11 +28,11 @@ public class KruskalThin : MazeGenerator
 
         for (int i = 0; i < maze.Width; i++)
             for (int n = 0; n < maze.Height - 1; n++)
-                Ratios[i + n * maze.Width] = new Edge(new IntVector2(i, n), new IntVector2(i, n + 1), Random.value);
+                Ratios[i + n * maze.Width] = new Edge(new Vector2Int(i, n), new Vector2Int(i, n + 1), Random.value);
 
         for (int i = 0; i < maze.Width - 1; i++)
             for (int n = 0; n < maze.Height; n++)
-                Ratios[i * maze.Height + n + maze.Width * maze.Height - maze.Width] = new Edge(new IntVector2(i, n), new IntVector2(i + 1, n), Random.value);
+                Ratios[i * maze.Height + n + maze.Width * maze.Height - maze.Width] = new Edge(new Vector2Int(i, n), new Vector2Int(i + 1, n), Random.value);
 
         System.Array.Sort(Ratios);
     }
@@ -71,12 +71,12 @@ public class KruskalThin : MazeGenerator
         return true;
     }
 
-    private void SetGroupRecursively(IntVector2 cell, int group)
+    private void SetGroupRecursively(Vector2Int cell, int group)
     {
         var current = GetGroup(cell);
         SetGroup(cell, group);
 
-        foreach (var item in IntVector2.Shifts)
+        foreach (var item in CellMaze.Shifts)
         {
             var adj = cell + item;
             if (maze.InMaze(adj) && GetGroup(adj) == current)
@@ -84,12 +84,12 @@ public class KruskalThin : MazeGenerator
         }
     }
 
-    private void SetGroup(IntVector2 cell, int group)
+    private void SetGroup(Vector2Int cell, int group)
     {
         groups[cell.x, cell.y] = group;
     }
 
-    private int GetGroup(IntVector2 cell)
+    private int GetGroup(Vector2Int cell)
     {
         return groups[cell.x, cell.y];
     }

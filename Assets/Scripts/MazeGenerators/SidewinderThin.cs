@@ -16,7 +16,7 @@ public class SidewinderThin : MazeGenerator
 
     public void Init()
     {
-        maze.CurrentCell = new IntVector2(0, 0);
+        maze.CurrentCell = new Vector2Int(0, 0);
         rowStart = 0;
     }
 
@@ -27,7 +27,7 @@ public class SidewinderThin : MazeGenerator
     public bool NextStep()
     {
         maze.SetPass(maze.CurrentCell, true);
-        var next = maze.CurrentCell + IntVector2.East;
+        var next = maze.CurrentCell + Vector2Int.right;
 
         if (maze.CurrentCell.y == maze.Height - 1)
         {
@@ -50,10 +50,10 @@ public class SidewinderThin : MazeGenerator
         else
         {
             var index = Random.Range(rowStart, maze.CurrentCell.x);
-            maze.SetTunnel(new IntVector2(index, maze.CurrentCell.y), new IntVector2(index, maze.CurrentCell.y + 1), true);
+            maze.SetTunnel(new Vector2Int(index, maze.CurrentCell.y), new Vector2Int(index, maze.CurrentCell.y + 1), true);
             maze.CurrentCell = next;
             if (!maze.InMaze(maze.CurrentCell))
-                maze.CurrentCell = new IntVector2(0, maze.CurrentCell.y + 1);
+                maze.CurrentCell = new Vector2Int(0, maze.CurrentCell.y + 1);
             rowStart = maze.CurrentCell.x;
             return true;
         }

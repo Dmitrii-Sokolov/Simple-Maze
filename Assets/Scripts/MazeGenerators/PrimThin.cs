@@ -43,7 +43,7 @@ public class PrimThin : MazeGenerator
         if (cells == 0)
             return false;
 
-        foreach (var item in IntVector2.Shifts)
+        foreach (var item in CellMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))
@@ -64,7 +64,7 @@ public class PrimThin : MazeGenerator
         return true;
     }
 
-    protected float GetRatio(IntVector2 cell, IntVector2 to)
+    protected float GetRatio(Vector2Int cell, Vector2Int to)
     {
         if ((to.x - cell.x) == 0)
             return vertRatios[cell.x, Mathf.Min(cell.y, to.y)];

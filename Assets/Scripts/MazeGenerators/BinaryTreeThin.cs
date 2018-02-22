@@ -16,18 +16,18 @@ public class BinaryTreeThin : MazeGenerator
 
     public void Init()
     {
-        maze.CurrentCell = new IntVector2(0, 0);
+        maze.CurrentCell = new Vector2Int(0, 0);
     }
 
-    private static List<IntVector2> shiftsSimple = new List<IntVector2>()
+    private static List<Vector2Int> shiftsSimple = new List<Vector2Int>()
     {
-        IntVector2.East, IntVector2.North
+        Vector2Int.right, Vector2Int.up
     };
 
     public bool NextStep()
     {
         maze.SetPass(maze.CurrentCell, true);
-        var choices = new List<IntVector2>();
+        var choices = new List<Vector2Int>();
 
         foreach (var item in shiftsSimple)
         {
@@ -45,7 +45,7 @@ public class BinaryTreeThin : MazeGenerator
             maze.SetTunnel(maze.CurrentCell, choices[index], true);
             maze.CurrentCell += shiftsSimple[0];
             if (!maze.InMaze(maze.CurrentCell))
-                maze.CurrentCell = new IntVector2(0, maze.CurrentCell.y + 1);
+                maze.CurrentCell = new Vector2Int(0, maze.CurrentCell.y + 1);
         }
 
         return true;

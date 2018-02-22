@@ -7,7 +7,7 @@ public class DeepSearchThin : MazeGenerator
     public void Generate() { while (NextStep()) ; }
     private Maze maze;
 
-    private Stack<IntVector2> MazeTrace = new Stack<IntVector2>();
+    private Stack<Vector2Int> MazeTrace = new Stack<Vector2Int>();
 
     public void Init(Maze TargetMaze)
     {
@@ -23,9 +23,9 @@ public class DeepSearchThin : MazeGenerator
     public bool NextStep()
     {
         maze.SetPass(maze.CurrentCell, true);
-        var choices = new List<IntVector2>();
+        var choices = new List<Vector2Int>();
 
-        foreach (var item in IntVector2.Shifts)
+        foreach (var item in CellMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))
