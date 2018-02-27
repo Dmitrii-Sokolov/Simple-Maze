@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://ru.wikipedia.org/wiki/Алгоритм_Краскала
-public class KruskalThin : MazeGenerator
+public class KruskalThin : IMazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    private Maze maze;
+    private IMaze maze;
 
-    public void Init(Maze TargetMaze)
+    public void Init(IMaze TargetMaze)
     {
         maze = TargetMaze;
         Init();
@@ -76,7 +76,7 @@ public class KruskalThin : MazeGenerator
         var current = GetGroup(cell);
         SetGroup(cell, group);
 
-        foreach (var item in CellMaze.Shifts)
+        foreach (var item in CelledMaze.Shifts)
         {
             var adj = cell + item;
             if (maze.InMaze(adj) && GetGroup(adj) == current)

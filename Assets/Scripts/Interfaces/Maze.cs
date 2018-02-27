@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface Maze
+public interface IMaze
 {
     void Clear();
-    void SetSize(int width, int height);
+    void SetSize(Vector2Int size);
 
     int OutTextureWidth { get; }
     int OutTextureHeight { get; }
@@ -13,9 +13,11 @@ public interface Maze
     int Width { get; }
     int Height { get; }
 
-    MazeGenerator Generator { set; get; }
+    IMazeGenerator Generator { set; get; }
     Texture2D Texture {get;}
     Vector2Int CurrentCell { get; set; }
+
+    Texture2D GetTexture();
 
     void PaintCell(Vector2Int cell);
     void PaintRig(Vector2Int cell);

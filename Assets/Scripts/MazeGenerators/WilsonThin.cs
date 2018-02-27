@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/321210/
-public class WilsonThin : MazeGenerator
+public class WilsonThin : IMazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    private Maze maze;
+    private IMaze maze;
 
-    public void Init(Maze TargetMaze)
+    public void Init(IMaze TargetMaze)
     {
         maze = TargetMaze;
         Init();
@@ -54,7 +54,7 @@ public class WilsonThin : MazeGenerator
             else
             {
                 var choices = new List<Vector2Int>();
-                foreach (var item in CellMaze.Shifts)
+                foreach (var item in CelledMaze.Shifts)
                 {
                     var adj = maze.CurrentCell + item;
                     if (MazeTrace.Count < 2 || MazeTrace[MazeTrace.Count - 2] != adj)

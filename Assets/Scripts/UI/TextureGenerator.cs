@@ -14,7 +14,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
     private Slider StepInput;
 
     [SerializeField]
-    private Image targetImage;
+    private RawImage targetRawImage;
 
     RectTransform rectTransform;
 
@@ -30,7 +30,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
 
     private bool isAutoMaze = true;
     private bool NeedRedraw = true;
-    private Maze Maze;
+    private IMaze Maze;
 
     private int size = 30;
     private int Size
@@ -38,7 +38,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
         set
         {
             size = value;
-            Maze.SetSize(Size, Size);
+            Maze.SetSize(new Vector2Int(Size, Size));
             Command(lastCommand);
         }
         get
@@ -58,12 +58,21 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
             SizeInput.onValueChanged.AddListener(c => Size = (int)c);
     }
 
+    public void SetMazeType(Type type)
+    {
+        Maze = (IMaze) Activator.CreateInstance(type);
+        targetRawImage.material = Resources.Load<Material>(type.ToString()) ?? Graphic.defaultGraphicMaterial;
+    }
+
     public void SetType(Type type)
     {
-        Maze = new WalledMaze(Size, Size);
+        Maze = new WalledMaze();
+        Maze.SetSize(new Vector2Int(Size, Size));
+        //SetMazeType(typeof(WalledMaze));
+        //Maze.SetSize(Size, Size);
 
         NeedRedraw = true;
-        Maze.Generator = (MazeGenerator) Activator.CreateInstance(type);
+        Maze.Generator = (IMazeGenerator) Activator.CreateInstance(type);
     }
 
     public void Command(CommandType command)
@@ -120,28 +129,9 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
         }
     }
 
-
     private void Visualize()
     {
-        var ColorMap = new Color[Size * Size];
-        var outTexture = new Texture2D(Size, Size, TextureFormat.ARGB32, false);
-        for (int i = 0; i < Size * Size; i++)
-            ColorMap[i] = Color.HSVToRGB((i / Size) / (float)Size, (i % Size) / (float)Size, 1f);
-        //for (int i = 0; i < Size * Size; i++)
-        //    ColorMap[i] = Color.HSVToRGB((i / Size) / (float)Size, 1f, (i % Size) / (float)Size);
-        //for (int i = 0; i < Size * Size; i++)
-        //    ColorMap[i] = UnityEngine.Random.ColorHSV();
-        //for (int i = 0; i < Size * Size; i++)
-        //    ColorMap[i] = UnityEngine.Random.ColorHSV(0f, 0f, 0f, 0f);
-        //var hue = UnityEngine.Random.value;
-        //for (int i = 0; i < Size * Size; i++)
-        //    ColorMap[i] = Color.HSVToRGB(hue, (i / Size) / (float)Size, (i % Size) / (float)Size);
-        outTexture.SetPixels(ColorMap);
-        outTexture.Apply();
-
-        Maze.Texture.Apply();
-        //targetImage.sprite = Sprite.Create(outTexture, new Rect(0, 0, Size, Size), new Vector2(0.5f, 0.5f));
-        targetImage.sprite = Sprite.Create(Maze.Texture, new Rect(0, 0, Maze.OutTextureWidth, Maze.OutTextureHeight), new Vector2(0.5f, 0.5f));
+        targetRawImage.texture = Maze.GetTexture();
     }
 
     public void OnPointerClick(PointerEventData eventData)

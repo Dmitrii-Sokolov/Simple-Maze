@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://progressor-blog.ru/qt/generatsiya-labirinta-i-ego-prohozhdenie/
-public class RecursiveDivisionThin : MazeGenerator
+public class RecursiveDivisionThin : IMazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    private Maze maze;
+    private IMaze maze;
 
-    public void Init(Maze TargetMaze)
+    public void Init(IMaze TargetMaze)
     {
         maze = TargetMaze;
         Init();

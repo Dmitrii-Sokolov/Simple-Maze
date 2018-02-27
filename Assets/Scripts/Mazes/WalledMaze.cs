@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WalledMaze : CellMaze
+public class WalledMaze : CelledMaze
 {
     private const int RoomSize = 2;
     private const int WallSize = 1;
@@ -24,11 +24,6 @@ public class WalledMaze : CellMaze
     private Color[] RoomTemp = new Color[RoomSize * RoomSize];
 
     public WalledMaze() { }
-
-    public WalledMaze(int width, int height)
-    {
-        SetSize(width, height);
-    }
 
     public override void Click(Vector2 point)
     {
@@ -72,7 +67,7 @@ public class WalledMaze : CellMaze
         while (stepsQueue.Count > 0)
         {
             var from = stepsQueue.Dequeue();
-            foreach (var item in CellMaze.Shifts)
+            foreach (var item in CelledMaze.Shifts)
             {
                 var adj = from + item;
                 if (InMaze(adj))
@@ -112,11 +107,11 @@ public class WalledMaze : CellMaze
             }
     }
 
-    public override void SetSize(int width, int height)
+    public override void SetSize(Vector2Int size)
     {
-        texHeight = (WallSize + RoomSize) * height + WallSize;
-        texWidth = (WallSize + RoomSize) * width + WallSize;
-        base.SetSize(width, height);
+        texWidth = (WallSize + RoomSize) * size.x + WallSize;
+        texHeight = (WallSize + RoomSize) * size.y + WallSize;
+        base.SetSize(size);
     }
 
     public override void Clear()

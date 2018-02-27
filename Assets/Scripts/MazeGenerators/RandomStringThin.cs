@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/251631/
-public class RandomStringThin : MazeGenerator
+public class RandomStringThin : IMazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    private Maze maze;
+    private IMaze maze;
 
-    public void Init(Maze TargetMaze)
+    public void Init(IMaze TargetMaze)
     {
         maze = TargetMaze;
         Init();

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeepSearchThin : MazeGenerator
+public class DeepSearchThin : IMazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    private Maze maze;
+    private IMaze maze;
 
     private Stack<Vector2Int> MazeTrace = new Stack<Vector2Int>();
 
-    public void Init(Maze TargetMaze)
+    public void Init(IMaze TargetMaze)
     {
         maze = TargetMaze;
         Init();
@@ -25,7 +25,7 @@ public class DeepSearchThin : MazeGenerator
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();
 
-        foreach (var item in CellMaze.Shifts)
+        foreach (var item in CelledMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))

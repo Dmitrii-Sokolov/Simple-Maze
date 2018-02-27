@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://wiki.roblox.com/index.php/Hunt-and-Kill
-public class HuntAndKillThin : MazeGenerator
+public class HuntAndKillThin : IMazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    private Maze maze;
+    private IMaze maze;
 
-    public void Init(Maze TargetMaze)
+    public void Init(IMaze TargetMaze)
     {
         maze = TargetMaze;
         Init();
@@ -22,7 +22,7 @@ public class HuntAndKillThin : MazeGenerator
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();
 
-        foreach (var item in CellMaze.Shifts)
+        foreach (var item in CelledMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))
@@ -37,7 +37,7 @@ public class HuntAndKillThin : MazeGenerator
                 {
                     var hunter = new Vector2Int(i, n);
                     if (!maze.GetPass(hunter))
-                        foreach (var item in CellMaze.Shifts)
+                        foreach (var item in CelledMaze.Shifts)
                         {
                             var adj = hunter + item;
                             if (maze.InMaze(adj))

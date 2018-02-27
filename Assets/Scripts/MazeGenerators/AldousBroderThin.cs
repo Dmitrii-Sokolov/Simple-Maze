@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/321210/
-public class AldousBroderThin : MazeGenerator
+public class AldousBroderThin : IMazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
 
-    private Maze maze;
+    private IMaze maze;
     private int cells;
 
-    public void Init(Maze TargetMaze)
+    public void Init(IMaze TargetMaze)
     {
         maze = TargetMaze;
         Init();
@@ -26,7 +26,7 @@ public class AldousBroderThin : MazeGenerator
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();
 
-        foreach (var item in CellMaze.Shifts)
+        foreach (var item in CelledMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/320140/
-public class SidewinderThin : MazeGenerator
+public class SidewinderThin : IMazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    private Maze maze;
+    private IMaze maze;
 
-    public void Init(Maze TargetMaze)
+    public void Init(IMaze TargetMaze)
     {
         maze = TargetMaze;
         Init();

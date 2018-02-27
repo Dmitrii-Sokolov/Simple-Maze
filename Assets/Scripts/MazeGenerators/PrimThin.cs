@@ -4,12 +4,12 @@ using System.Linq;
 using UnityEngine;
 
 //https://ru.wikipedia.org/wiki/Алгоритм_Прима
-public class PrimThin : MazeGenerator
+public class PrimThin : IMazeGenerator
 {
     public void Generate() { while (NextStep()) ; }
-    private Maze maze;
+    private IMaze maze;
 
-    public void Init(Maze TargetMaze)
+    public void Init(IMaze TargetMaze)
     {
         maze = TargetMaze;
         Init();
@@ -43,7 +43,7 @@ public class PrimThin : MazeGenerator
         if (cells == 0)
             return false;
 
-        foreach (var item in CellMaze.Shifts)
+        foreach (var item in CelledMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))

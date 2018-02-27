@@ -2,22 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CellMaze : Maze
+public class CelledMaze : IMaze
 {
     public static Vector2Int[] Shifts = new Vector2Int[4]
     {
         Vector2Int.right, Vector2Int.up, Vector2Int.left, Vector2Int.down
     };
 
-    public CellMaze() { }
+    public CelledMaze() { }
 
-    public CellMaze(int width, int height)
-    {
-        SetSize(width, height);
-    }
-
-    private MazeGenerator generator { set; get; }
-    public MazeGenerator Generator
+    private IMazeGenerator generator { set; get; }
+    public IMazeGenerator Generator
     {
         set
         {
@@ -57,7 +52,18 @@ public class CellMaze : Maze
         }
     }
 
-    public Texture2D Texture { protected set; get; }
+    public Texture2D Texture
+    {
+        protected set;
+        get;
+    }
+
+    public Texture2D GetTexture()
+    {
+        Texture.Apply();
+        return Texture;
+    }
+
     public int Width { private set; get; }
     public int Height { private set; get; }
     public virtual int OutTextureWidth { get { return Width; } }
@@ -104,7 +110,7 @@ public class CellMaze : Maze
         while (stepsQueue.Count > 0)
         {
             var from = stepsQueue.Dequeue();
-            foreach (var item in CellMaze.Shifts)
+            foreach (var item in CelledMaze.Shifts)
             {
                 var adj = from + item;
                 if (InMaze(adj))
@@ -127,10 +133,10 @@ public class CellMaze : Maze
                     PaintCell(new Vector2Int(i, n), Color.Lerp(MinRangeColor, MaxRangeColor, steps[i, n] / ((float)maxRange)));
     }
 
-    public virtual void SetSize(int width, int height)
+    public virtual void SetSize(Vector2Int size)
     {
-        Width = width;
-        Height = height;
+        Width = size.x;
+        Height = size.y;
         Clear();
     }
 

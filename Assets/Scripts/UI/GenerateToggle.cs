@@ -34,7 +34,7 @@ public class GenerateToggle : MonoBehaviour {
         if (group == null)
             Debug.LogError("GenerateToggle : group isn't set");
 
-        var mazeGeneratorTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetInterfaces().Contains(typeof(MazeGenerator))).ToArray();
+        var mazeGeneratorTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IMazeGenerator))).ToArray();
         foreach (var element in mazeGeneratorTypes)
         {
             var newButton = Instantiate(togglePrefab, listRoot);
