@@ -3,26 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://progressor-blog.ru/qt/generatsiya-labirinta-i-ego-prohozhdenie/
-public class RecursiveUnionThin : IMazeGenerator
+public class RecursiveUnionThin : BaseMazeGenerator
 {
-    public void Generate() { while (NextStep()); }
-
     Queue<IntRect> rects = new Queue<IntRect>();
-    private IMaze maze;
 
-    public void Init(IMaze TargetMaze)
-    {
-        maze = TargetMaze;
-        Init();
-    }
-
-    public void Init()
+    public override void Init()
     {
         rects.Clear();
         rects.Enqueue(new IntRect(new Vector2Int(0, 0), new Vector2Int(maze.Width - 1, maze.Height - 1)));
     }
 
-    public bool NextStep()
+    public override bool NextStep()
     {
         if (rects.Count == 0)
             return false;

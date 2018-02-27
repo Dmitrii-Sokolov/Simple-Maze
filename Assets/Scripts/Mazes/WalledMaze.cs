@@ -27,18 +27,19 @@ public class WalledMaze : CelledMaze
 
     public override void Click(Vector2 point)
     {
-        var localPoint = new Vector2Int(Mathf.FloorToInt(point.x * OutTextureWidth), Mathf.FloorToInt(point.y * OutTextureHeight));
-        var mark = new Vector2Int(localPoint.x % (RoomSize + WallSize), localPoint.y % (RoomSize + WallSize));
-        var position = new Vector2Int(localPoint.x / (RoomSize + WallSize), localPoint.y / (RoomSize + WallSize));
+        Debug.LogError("Sorry! Need to replace some code.");
+        //var localPoint = new Vector2Int(Mathf.FloorToInt(point.x * OutTextureWidth), Mathf.FloorToInt(point.y * OutTextureHeight));
+        //var mark = new Vector2Int(localPoint.x % (RoomSize + WallSize), localPoint.y % (RoomSize + WallSize));
+        //var position = new Vector2Int(localPoint.x / (RoomSize + WallSize), localPoint.y / (RoomSize + WallSize));
 
-        if (mark.x < WallSize && mark.y < WallSize)
-            OnWallClick();
-        else if (mark.x >= WallSize && mark.y >= WallSize)
-            OnRoomClick(position);
-        else if (mark.x >= WallSize && mark.y < WallSize)
-            OnTunnelClick(position + Vector2Int.down, position);
-        else if (mark.x < WallSize && mark.y >= WallSize)
-            OnTunnelClick(position + Vector2Int.left, position);
+        //if (mark.x < WallSize && mark.y < WallSize)
+        //    OnWallClick();
+        //else if (mark.x >= WallSize && mark.y >= WallSize)
+        //    OnRoomClick(position);
+        //else if (mark.x >= WallSize && mark.y < WallSize)
+        //    OnTunnelClick(position + Vector2Int.down, position);
+        //else if (mark.x < WallSize && mark.y >= WallSize)
+        //    OnTunnelClick(position + Vector2Int.left, position);
     }
     
     protected void OnTunnelClick(Vector2Int from, Vector2Int to)

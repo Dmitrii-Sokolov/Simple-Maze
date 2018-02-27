@@ -13,7 +13,6 @@ public interface IMaze
     int Width { get; }
     int Height { get; }
 
-    IMazeGenerator Generator { set; get; }
     Texture2D Texture {get;}
     Vector2Int CurrentCell { get; set; }
 

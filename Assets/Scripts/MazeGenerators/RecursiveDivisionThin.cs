@@ -3,18 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://progressor-blog.ru/qt/generatsiya-labirinta-i-ego-prohozhdenie/
-public class RecursiveDivisionThin : IMazeGenerator
+public class RecursiveDivisionThin : BaseMazeGenerator
 {
-    public void Generate() { while (NextStep()) ; }
-    private IMaze maze;
+    Queue<IntRect> rects = new Queue<IntRect>();
 
-    public void Init(IMaze TargetMaze)
-    {
-        maze = TargetMaze;
-        Init();
-    }
-
-    public void Init()
+    public override void Init()
     {
         rects.Clear();
 
@@ -33,9 +26,7 @@ public class RecursiveDivisionThin : IMazeGenerator
         rects.Enqueue(new IntRect(new Vector2Int(0, 0), new Vector2Int(maze.Width - 1, maze.Height - 1)));
     }
 
-    Queue<IntRect> rects = new Queue<IntRect>();
-    
-    public bool NextStep()
+    public override bool NextStep()
     {
         if (rects.Count == 0)
             return false;

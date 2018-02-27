@@ -4,18 +4,14 @@ using System.Linq;
 using UnityEngine;
 
 //https://ru.wikipedia.org/wiki/Алгоритм_Прима
-public class PrimThin : IMazeGenerator
+public class PrimThin : BaseMazeGenerator
 {
-    public void Generate() { while (NextStep()) ; }
-    private IMaze maze;
+    private LinkedList<Edge> Ratios = new LinkedList<Edge>();
+    private float[,] vertRatios;
+    private float[,] horRatios;
+    private int cells;
 
-    public void Init(IMaze TargetMaze)
-    {
-        maze = TargetMaze;
-        Init();
-    }
-
-    public void Init()
+    public override void Init()
     {
 
         Ratios.Clear();
@@ -32,12 +28,7 @@ public class PrimThin : IMazeGenerator
                 horRatios[i, n] = Random.value;
     }
 
-    private LinkedList<Edge> Ratios = new LinkedList<Edge>();
-    private float[,] vertRatios;
-    private float[,] horRatios;
-    private int cells;
-
-    public bool NextStep()
+    public override bool NextStep()
     {
         maze.SetPass(maze.CurrentCell, true);
         if (cells == 0)

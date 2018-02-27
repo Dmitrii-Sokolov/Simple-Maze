@@ -3,28 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/320140/
-public class SidewinderThin : IMazeGenerator
+public class SidewinderThin : BaseMazeGenerator
 {
-    public void Generate() { while (NextStep()) ; }
-    private IMaze maze;
+    private const float horChance = 0.6f;
+    private int rowStart;
 
-    public void Init(IMaze TargetMaze)
-    {
-        maze = TargetMaze;
-        Init();
-    }
-
-    public void Init()
+    public override void Init()
     {
         maze.CurrentCell = new Vector2Int(0, 0);
         rowStart = 0;
     }
 
-    private const float horChance = 0.6f;
-
-    private int rowStart;
-
-    public bool NextStep()
+    public override bool NextStep()
     {
         maze.SetPass(maze.CurrentCell, true);
         var next = maze.CurrentCell + Vector2Int.right;

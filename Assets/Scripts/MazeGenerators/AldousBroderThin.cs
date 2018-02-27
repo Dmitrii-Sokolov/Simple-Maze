@@ -3,25 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/321210/
-public class AldousBroderThin : IMazeGenerator
+public class AldousBroderThin : BaseMazeGenerator
 {
-    public void Generate() { while (NextStep()) ; }
-
-    private IMaze maze;
     private int cells;
 
-    public void Init(IMaze TargetMaze)
-    {
-        maze = TargetMaze;
-        Init();
-    }
-
-    public void Init()
+    public override void Init()
     {
         cells = maze.Width * maze.Height - 1;
     }
 
-    public bool NextStep()
+    public override bool NextStep()
     {
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();

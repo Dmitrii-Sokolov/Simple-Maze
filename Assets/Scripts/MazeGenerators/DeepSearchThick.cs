@@ -2,18 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeepSearchThick : IMazeGenerator
+public class DeepSearchThick : BaseMazeGenerator
 {
-    public void Generate() { while (NextStep()) ; }
-    private IMaze maze;
+    private Stack<Vector2Int> MazeTrace = new Stack<Vector2Int>();
+    private sbyte[,] nodeDegrees;
 
-    public void Init(IMaze TargetMaze)
-    {
-        maze = TargetMaze;
-        Init();
-    }
-
-    public void Init()
+    public override void Init()
     {
         MazeTrace.Clear();
 
@@ -23,10 +17,7 @@ public class DeepSearchThick : IMazeGenerator
                 nodeDegrees[i, n] = 0;
     }
 
-    private Stack<Vector2Int> MazeTrace = new Stack<Vector2Int>();
-    private sbyte[,] nodeDegrees;
-
-    public bool NextStep()
+    public override bool NextStep()
     {
         if (!maze.GetPass(maze.CurrentCell))
         {

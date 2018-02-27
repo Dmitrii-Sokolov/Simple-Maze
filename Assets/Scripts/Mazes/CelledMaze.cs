@@ -9,22 +9,13 @@ public class CelledMaze : IMaze
         Vector2Int.right, Vector2Int.up, Vector2Int.left, Vector2Int.down
     };
 
-    public CelledMaze() { }
+    public CelledMaze()
+    {
+        Width = 2;
+        Height = 2;
+    }
 
     private IMazeGenerator generator { set; get; }
-    public IMazeGenerator Generator
-    {
-        set
-        {
-            Clear();
-            generator = value;
-            generator.Init(this);
-        }
-        get
-        {
-            return generator;
-        }
-    }
 
     protected static Color Temprorary = Color.yellow;
     protected static Color Rig = Color.red;
@@ -154,9 +145,6 @@ public class CelledMaze : IMaze
                 passes[i, n] = false;
 
         CurrentCell = new Vector2Int(Random.Range(0, Width), Random.Range(0, Height));
-
-        if (Generator != null)
-            Generator.Init(this);
     }
 
     public bool InMaze(Vector2Int cell)

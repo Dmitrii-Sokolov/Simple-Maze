@@ -3,21 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://wiki.roblox.com/index.php/Hunt-and-Kill
-public class HuntAndKillThin : IMazeGenerator
+public class HuntAndKillThin : BaseMazeGenerator
 {
-    public void Generate() { while (NextStep()) ; }
-    private IMaze maze;
-
-    public void Init(IMaze TargetMaze)
-    {
-        maze = TargetMaze;
-        Init();
-    }
-
-    public void Init() { }
-
-
-    public bool NextStep()
+    public override bool NextStep()
     {
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();

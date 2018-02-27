@@ -3,23 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/251631/
-public class RandomStringThin : IMazeGenerator
+public class RandomStringThin : BaseMazeGenerator
 {
-    public void Generate() { while (NextStep()) ; }
-    private IMaze maze;
-
-    public void Init(IMaze TargetMaze)
-    {
-        maze = TargetMaze;
-        Init();
-    }
-
-    public void Init()
+    public override void Init()
     {
         maze.CurrentCell = new Vector2Int(0, 0);
     }
 
-    public bool NextStep()
+    public override bool NextStep()
     {
         if (Random.value > 0.5f)
         {

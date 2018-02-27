@@ -16,6 +16,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private RawImage targetRawImage;
 
+    IMazeGenerator mazeGenerator;
     RectTransform rectTransform;
 
     public enum CommandType
@@ -60,19 +61,32 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
 
     public void SetMazeType(Type type)
     {
-        Maze = (IMaze) Activator.CreateInstance(type);
-        targetRawImage.material = Resources.Load<Material>(type.ToString()) ?? Graphic.defaultGraphicMaterial;
+        var probe = Activator.CreateInstance(type) as IMaze;
+        if (probe != null)
+        {
+            Maze = probe;
+            targetRawImage.material = Resources.Load<Material>(type.ToString()) ?? Graphic.defaultGraphicMaterial;
+            Maze.SetSize(new Vector2Int(Size, Size));
+        }
+        else
+            Debug.LogError("Invalid maze type match.");
     }
 
-    public void SetType(Type type)
+    public void SetGeneratorType(Type type)
     {
-        Maze = new WalledMaze();
-        Maze.SetSize(new Vector2Int(Size, Size));
-        //SetMazeType(typeof(WalledMaze));
-        //Maze.SetSize(Size, Size);
-
-        NeedRedraw = true;
-        Maze.Generator = (IMazeGenerator) Activator.CreateInstance(type);
+        var probe = Activator.CreateInstance(type) as IMazeGenerator;
+        if (probe != null)
+        {
+            //Maze = new WalledMaze();
+            //Maze.SetSize(new Vector2Int(Size, Size));
+            //Вместо пересозданиия лучше просто очистить
+            Maze.Clear();
+            mazeGenerator = probe;
+            mazeGenerator.SetMaze(Maze);
+            NeedRedraw = true;
+        }
+        else
+            Debug.LogError("Invalid maze type match.");
     }
 
     public void Command(CommandType command)
@@ -84,10 +98,10 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
         {
             default:
             case CommandType.Full:
-                Maze.Generator.Generate();
+                mazeGenerator.Generate();
                 break;
             case CommandType.OneStep:
-                Maze.Generator.NextStep();
+                mazeGenerator.NextStep();
                 break;
             case CommandType.AutoStep:
                 isAutoMaze = true;
@@ -99,6 +113,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
                 break;
             case CommandType.Clear:
                 Maze.Clear();
+                mazeGenerator.SetMaze(Maze);
                 break;
         }
     }
@@ -113,7 +128,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
             {
                 NeedRedraw = true;
                 nextTime += timeStep;
-                if (!Maze.Generator.NextStep())
+                if (!mazeGenerator.NextStep())
                 {
                     isAutoMaze = false;
                     Debug.Log("Finished in " + currentTime + " s");

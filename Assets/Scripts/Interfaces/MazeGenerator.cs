@@ -4,8 +4,9 @@ using UnityEngine;
 
 public interface IMazeGenerator
 {
-    void Init(IMaze TargetMaze);
+    void SetMaze(IMaze TargetMaze);
     void Init();
+
     void Generate();
     bool NextStep();
 }

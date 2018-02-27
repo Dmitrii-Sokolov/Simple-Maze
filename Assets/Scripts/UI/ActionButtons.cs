@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GenerateButton : MonoBehaviour {
-
+public class ActionButtons : MonoBehaviour
+{
     [SerializeField]
     private Transform listRoot;
 

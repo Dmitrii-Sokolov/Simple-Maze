@@ -2,25 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeepSearchThin : IMazeGenerator
+public class DeepSearchThin : BaseMazeGenerator
 {
-    public void Generate() { while (NextStep()) ; }
-    private IMaze maze;
-
     private Stack<Vector2Int> MazeTrace = new Stack<Vector2Int>();
 
-    public void Init(IMaze TargetMaze)
-    {
-        maze = TargetMaze;
-        Init();
-    }
-
-    public void Init()
+    public override void Init()
     {
         MazeTrace.Clear();
     }
 
-    public bool NextStep()
+    public override bool NextStep()
     {
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();

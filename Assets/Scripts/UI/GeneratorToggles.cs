@@ -6,8 +6,8 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Reflection;
 
-public class GenerateToggle : MonoBehaviour {
-
+public class GeneratorToggles : MonoBehaviour
+{
     [SerializeField]
     private Transform listRoot;
 
@@ -33,13 +33,14 @@ public class GenerateToggle : MonoBehaviour {
 
         if (group == null)
             Debug.LogError("GenerateToggle : group isn't set");
-
-        var mazeGeneratorTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IMazeGenerator))).ToArray();
+        
+        var mazeGeneratorTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.BaseType == typeof(BaseMazeGenerator)).ToArray();
+        //var mazeGeneratorTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IMazeGenerator))).ToArray();
         foreach (var element in mazeGeneratorTypes)
         {
             var newButton = Instantiate(togglePrefab, listRoot);
             newButton.GetComponentInChildren<Text>().text = element.ToString();
-            newButton.GetComponent<Toggle>().onValueChanged.AddListener(c => { if(c) generator.SetType(element); });
+            newButton.GetComponent<Toggle>().onValueChanged.AddListener(c => { if(c) generator.SetGeneratorType(element); });
             newButton.GetComponent<Toggle>().group = group;
         }
 

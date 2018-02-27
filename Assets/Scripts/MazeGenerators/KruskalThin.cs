@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://ru.wikipedia.org/wiki/Алгоритм_Краскала
-public class KruskalThin : IMazeGenerator
+public class KruskalThin : BaseMazeGenerator
 {
-    public void Generate() { while (NextStep()) ; }
-    private IMaze maze;
+    private const bool ShowOnlyPossibleSteps = true;
+    private Edge[] Ratios;
+    private int[,] groups;
+    private int cells;
+    private int index;
 
-    public void Init(IMaze TargetMaze)
-    {
-        maze = TargetMaze;
-        Init();
-    }
-
-    public void Init()
+    public override void Init()
     {
         cells = maze.Width * maze.Height - 1;
         index = 0;
@@ -37,13 +34,7 @@ public class KruskalThin : IMazeGenerator
         System.Array.Sort(Ratios);
     }
 
-    private const bool ShowOnlyPossibleSteps = true;
-    private Edge[] Ratios;
-    private int[,] groups;
-    private int cells;
-    private int index;
-    
-    public bool NextStep()
+    public override bool NextStep()
     {
         if (GetGroup(Ratios[index].from) != GetGroup(Ratios[index].to))
         {

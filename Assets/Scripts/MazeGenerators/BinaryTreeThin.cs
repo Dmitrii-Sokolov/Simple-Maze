@@ -3,28 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/320140/
-public class BinaryTreeThin : IMazeGenerator
+public class BinaryTreeThin : BaseMazeGenerator
 {
-    public void Generate() { while (NextStep()) ; }
-    private IMaze maze;
-
-    public void Init(IMaze TargetMaze)
-    {
-        maze = TargetMaze;
-        Init();
-    }
-
-    public void Init()
-    {
-        maze.CurrentCell = new Vector2Int(0, 0);
-    }
-
     private static List<Vector2Int> shiftsSimple = new List<Vector2Int>()
     {
         Vector2Int.right, Vector2Int.up
     };
 
-    public bool NextStep()
+    public override void Init()
+    {
+        maze.CurrentCell = new Vector2Int(0, 0);
+    }
+
+    public override bool NextStep()
     {
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();
