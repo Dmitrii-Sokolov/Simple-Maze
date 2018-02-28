@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class WalledMaze : CelledMaze
 {
-    private const int RoomSize = 2;
-    private const int WallSize = 1;
-
     public override int OutTextureWidth { get { return texWidth; } }
     public override int OutTextureHeight { get { return texHeight; } }
 
@@ -16,30 +13,44 @@ public class WalledMaze : CelledMaze
     private int texWidth;
     private int texHeight;
 
-    private Color[] WallFull = new Color[WallSize * RoomSize];
-    private Color[] WallEmpty = new Color[WallSize * RoomSize];
-    private Color[] RoomRig = new Color[RoomSize * RoomSize];
-    private Color[] RoomFull = new Color[RoomSize * RoomSize];
-    private Color[] RoomEmpty = new Color[RoomSize * RoomSize];
-    private Color[] RoomTemp = new Color[RoomSize * RoomSize];
+    private float wallWidth = 0f;
+    public override float WallWidth
+    {
+        set
+        {
+            wallWidth = value;
+            if (null != mazeMaterial)
+                mazeMaterial.SetFloat("_WallWidth", Mathf.Clamp01(value));
+        }
+        get
+        {
+            return wallWidth;
+        }
+    }
 
-    public WalledMaze() { }
+    private Material mazeMaterial;
+    public override Material Material
+    {
+        set
+        {
+            mazeMaterial = value;
+        }
+    }
 
     public override void Click(Vector2 point)
     {
-        Debug.LogError("Sorry! Need to replace some code.");
-        //var localPoint = new Vector2Int(Mathf.FloorToInt(point.x * OutTextureWidth), Mathf.FloorToInt(point.y * OutTextureHeight));
-        //var mark = new Vector2Int(localPoint.x % (RoomSize + WallSize), localPoint.y % (RoomSize + WallSize));
-        //var position = new Vector2Int(localPoint.x / (RoomSize + WallSize), localPoint.y / (RoomSize + WallSize));
+        var localPoint = new Vector2(point.x * (Width + WallWidth), point.y * (Height + WallWidth));
+        var mark = new Vector2(localPoint.x - Mathf.Floor(localPoint.x), localPoint.y - Mathf.Floor(localPoint.y));
+        var position = new Vector2Int(Mathf.FloorToInt(localPoint.x), Mathf.FloorToInt(localPoint.y));
 
-        //if (mark.x < WallSize && mark.y < WallSize)
-        //    OnWallClick();
-        //else if (mark.x >= WallSize && mark.y >= WallSize)
-        //    OnRoomClick(position);
-        //else if (mark.x >= WallSize && mark.y < WallSize)
-        //    OnTunnelClick(position + Vector2Int.down, position);
-        //else if (mark.x < WallSize && mark.y >= WallSize)
-        //    OnTunnelClick(position + Vector2Int.left, position);
+        if (mark.x < WallWidth && mark.y < WallWidth)
+            OnWallClick();
+        else if (mark.x >= WallWidth && mark.y >= WallWidth)
+            OnRoomClick(position);
+        else if (mark.x >= WallWidth && mark.y < WallWidth)
+            OnTunnelClick(position + Vector2Int.down, position);
+        else if (mark.x < WallWidth && mark.y >= WallWidth)
+            OnTunnelClick(position + Vector2Int.left, position);
     }
     
     protected void OnTunnelClick(Vector2Int from, Vector2Int to)
@@ -110,27 +121,13 @@ public class WalledMaze : CelledMaze
 
     public override void SetSize(Vector2Int size)
     {
-        texWidth = (WallSize + RoomSize) * size.x + WallSize;
-        texHeight = (WallSize + RoomSize) * size.y + WallSize;
+        texWidth = 2 * size.x + 1;
+        texHeight = 2 * size.y + 1;
         base.SetSize(size);
     }
 
     public override void Clear()
     {
-        for (int i = 0; i < RoomSize * RoomSize; i++)
-        {
-            RoomRig[i] = Rig;
-            RoomFull[i] = Full;
-            RoomEmpty[i] = Empty;
-            RoomTemp[i] = Temprorary;
-        }
-
-        for (int i = 0; i < WallSize * RoomSize; i++)
-        {
-            WallFull[i] = Full;
-            WallEmpty[i] = Empty;
-        }
-
         base.Clear();
 
         vertPasses = new bool[Width, Height - 1];
@@ -146,41 +143,35 @@ public class WalledMaze : CelledMaze
 
     public override void PaintTemp(Vector2Int cell, bool temp)
     {
-        Texture.SetPixels((WallSize + RoomSize) * cell.x + WallSize, (WallSize + RoomSize) * cell.y + WallSize, RoomSize, RoomSize, temp ? RoomTemp : GetPass(cell) ? RoomEmpty : RoomFull);
+        Texture.SetPixel(2  * cell.x + 1, 2  * cell.y + 1, temp ? Temprorary : GetPass(cell) ? Empty : Full);
     }
 
     protected override void PaintCell(Vector2Int cell, Color color)
     {
-        for (int i = 0; i < RoomSize; i++)
-            for (int n = 0; n < RoomSize; n++)
-                Texture.SetPixel((WallSize + RoomSize) * cell.x + WallSize + i, (WallSize + RoomSize) * cell.y + WallSize + n, color);
+        Texture.SetPixel(2  * cell.x + 1, 2  * cell.y + 1, color);
     }
 
     public override void PaintCell(Vector2Int cell)
     {
-        Texture.SetPixels((WallSize + RoomSize) * cell.x + WallSize, (WallSize + RoomSize) * cell.y + WallSize, RoomSize, RoomSize, GetPass(cell) ? RoomEmpty : RoomFull);
+        Texture.SetPixel(2 * cell.x + 1, 2 * cell.y + 1, GetPass(cell) ? Empty : Full);
     }
 
     public override void PaintRig(Vector2Int cell)
     {
-        Texture.SetPixels((WallSize + RoomSize) * cell.x + WallSize, (WallSize + RoomSize) * cell.y + WallSize, RoomSize, RoomSize, RoomRig);
+        Texture.SetPixel(2  * cell.x + 1, 2  * cell.y + 1, Rig);
     }
 
     protected void PaintTunnel(Vector2Int cell, Vector2Int to, Color color)
     {
         if ((to.x - cell.x) == 0)
         {
-            for (int i = 0; i < RoomSize; i++)
-                for (int n = 0; n < WallSize; n++)
-                    Texture.SetPixel((WallSize + RoomSize) * cell.x + WallSize + i, (WallSize + RoomSize) * (1 + Mathf.Min(cell.y, to.y)) + n, color);
+            Texture.SetPixel(2 * cell.x + 1, 2  * (1 + Mathf.Min(cell.y, to.y)), color);
             return;
         }
 
         if ((to.y - cell.y) == 0)
         {
-            for (int i = 0; i < WallSize; i++) 
-                for (int n = 0; n < RoomSize; n++)
-                    Texture.SetPixel((WallSize + RoomSize) * (1 + Mathf.Min(cell.x, to.x)) + i, (WallSize + RoomSize) * cell.y + WallSize + n, color);
+            Texture.SetPixel(2  * (1 + Mathf.Min(cell.x, to.x)), 2  * cell.y + 1, color);
         }
     }
     public override void SetTunnel(Vector2Int cell, Vector2Int to, bool tunnel)
@@ -188,14 +179,14 @@ public class WalledMaze : CelledMaze
         if ((to.x - cell.x) == 0)
         {
             vertPasses[cell.x, Mathf.Min(cell.y, to.y)] = tunnel;
-            Texture.SetPixels((WallSize + RoomSize) * cell.x + WallSize, (WallSize + RoomSize) * (1 + Mathf.Min(cell.y, to.y)), RoomSize, WallSize, tunnel ? WallEmpty : WallFull);
+            Texture.SetPixel(2  * cell.x + 1, 2  * (1 + Mathf.Min(cell.y, to.y)), tunnel ? Empty : Full);
             return;
         }
 
         if ((to.y - cell.y) == 0)
         {
             horPasses[Mathf.Min(cell.x, to.x), cell.y] = tunnel;
-            Texture.SetPixels((WallSize + RoomSize) * (1 + Mathf.Min(cell.x, to.x)), (WallSize + RoomSize) * cell.y + WallSize, WallSize, RoomSize, tunnel ? WallEmpty : WallFull);
+            Texture.SetPixel(2  * (1 + Mathf.Min(cell.x, to.x)), 2  * cell.y + 1, tunnel ? Empty : Full);
         }
     }
 

@@ -8,10 +8,13 @@ using UnityEngine.UI;
 public class TextureGenerator : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
+    private Slider SpeedInput;
+
+    [SerializeField]
     private Slider SizeInput;
 
     [SerializeField]
-    private Slider StepInput;
+    private Slider WallWidthInput;
 
     [SerializeField]
     private RawImage targetRawImage;
@@ -25,26 +28,51 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
     }
 
     private float currentTime = 0;
-    private float nextTime = 0;
-    private float timeStep = 0.008f;
+    private float currentStep = 0;
+    private float stepsCount = 0;
+
     private CommandType lastCommand = CommandType.AutoStep;
 
     private bool isAutoMaze = true;
     private bool NeedRedraw = true;
     private IMaze Maze;
 
-    private int size = 30;
+    private float StepsPerSecond
+    {
+        get
+        {
+            return SpeedInput.value;
+        }
+    }
+
     private int Size
     {
         set
         {
-            size = value;
-            Maze.SetSize(new Vector2Int(Size, Size));
+            if (null != Maze)
+            {
+                Maze.SetSize(value);
+                if (mazeGenerator != null)
+                    mazeGenerator.SetMaze(Maze);
+            }
             Command(lastCommand);
         }
         get
         {
-            return size;
+            return (int) SizeInput.value;
+        }
+    }
+
+    private float WallWidth
+    {
+        set
+        {
+            if (null != Maze)
+                Maze.WallWidth = value;
+        }
+        get
+        {
+            return WallWidthInput.value;
         }
     }
 
@@ -52,11 +80,11 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
     {
         rectTransform = gameObject.GetComponent<RectTransform>();
 
-        if (null != StepInput)
-            StepInput.onValueChanged.AddListener(c => timeStep = Mathf.Pow(c, 4));
-
         if (null != SizeInput)
             SizeInput.onValueChanged.AddListener(c => Size = (int)c);
+
+        if (null != WallWidthInput)
+            WallWidthInput.onValueChanged.AddListener(c => WallWidth = c);
     }
 
     public void SetMazeType(Type type)
@@ -66,7 +94,13 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
         {
             Maze = probe;
             targetRawImage.material = Resources.Load<Material>(type.ToString()) ?? Graphic.defaultGraphicMaterial;
-            Maze.SetSize(new Vector2Int(Size, Size));
+            Maze.SetSize(Size);
+            Maze.Material = targetRawImage.material;
+            Maze.WallWidth = WallWidth;
+            NeedRedraw = true;
+
+            if (mazeGenerator != null)
+                mazeGenerator.SetMaze(Maze);
         }
         else
             Debug.LogError("Invalid maze type match.");
@@ -77,20 +111,24 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
         var probe = Activator.CreateInstance(type) as IMazeGenerator;
         if (probe != null)
         {
-            //Maze = new WalledMaze();
-            //Maze.SetSize(new Vector2Int(Size, Size));
-            //Вместо пересозданиия лучше просто очистить
-            Maze.Clear();
             mazeGenerator = probe;
-            mazeGenerator.SetMaze(Maze);
             NeedRedraw = true;
+
+            if (Maze != null)
+            {
+                Maze.Clear();
+                mazeGenerator.SetMaze(Maze);
+            }
         }
         else
-            Debug.LogError("Invalid maze type match.");
+            Debug.LogError("Invalid maze generator type match.");
     }
 
     public void Command(CommandType command)
     {
+        if (mazeGenerator == null || Maze == null)
+            return;
+
         lastCommand = command;
         NeedRedraw = true;
 
@@ -105,8 +143,9 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
                 break;
             case CommandType.AutoStep:
                 isAutoMaze = true;
-                nextTime = 0;
-                currentTime = 0;
+                stepsCount = 0f;
+                currentStep = 0f;
+                currentTime = 0f;
                 break;
             case CommandType.Stop:
                 isAutoMaze = false;
@@ -121,17 +160,18 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
     private void Update()
     {
         currentTime += Time.deltaTime;
+        stepsCount += Time.deltaTime * StepsPerSecond;
 
         if (isAutoMaze)
         {
-            while (nextTime < currentTime)
+            while (currentStep < stepsCount)
             {
                 NeedRedraw = true;
-                nextTime += timeStep;
+                currentStep++;
                 if (!mazeGenerator.NextStep())
                 {
                     isAutoMaze = false;
-                    Debug.Log("Finished in " + currentTime + " s");
+                    Debug.Log("Finished in " + currentTime.ToString("0.000") + "s and " + currentStep.ToString("### ###") + " steps.");
                     break;
                 }
             }

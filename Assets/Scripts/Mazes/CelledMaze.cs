@@ -124,6 +124,14 @@ public class CelledMaze : IMaze
                     PaintCell(new Vector2Int(i, n), Color.Lerp(MinRangeColor, MaxRangeColor, steps[i, n] / ((float)maxRange)));
     }
 
+    public virtual Material Material { set { } }
+    public virtual float WallWidth { set { } get { return 0f; }}
+
+    public virtual void SetSize(int size)
+    {
+        SetSize(new Vector2Int(size, size));
+    }
+
     public virtual void SetSize(Vector2Int size)
     {
         Width = size.x;

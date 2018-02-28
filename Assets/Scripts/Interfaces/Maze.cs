@@ -5,7 +5,11 @@ using UnityEngine;
 public interface IMaze
 {
     void Clear();
+    void SetSize(int size);
     void SetSize(Vector2Int size);
+
+    Material Material { set; }
+    float WallWidth { set; get; }
 
     int OutTextureWidth { get; }
     int OutTextureHeight { get; }

@@ -6,7 +6,7 @@ public class BaseMazeGenerator : IMazeGenerator
 {
     protected IMaze maze;
 
-    public void Generate() { while (NextStep()) ; }
+    public void Generate() { while (NextStep()); }
 
     public void SetMaze(IMaze target)
     {
