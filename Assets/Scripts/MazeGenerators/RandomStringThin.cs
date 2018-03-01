@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/251631/
-public class RandomStringThin : BaseMazeGenerator
+public class RandomStringThin : MazeGenerator<WalledMaze>
 {
-    public override void Init()
+    protected override void Init()
     {
         maze.CurrentCell = new Vector2Int(0, 0);
     }
 
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         if (Random.value > 0.5f)
         {
             SetQuad(maze.CurrentCell, maze.CurrentCell + Vector2Int.right);

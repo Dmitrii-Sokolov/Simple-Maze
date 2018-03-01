@@ -3,20 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/320140/
-public class BinaryTreeThin : BaseMazeGenerator
+public class BinaryTreeThin : MazeGenerator<WalledMaze>
 {
     private static List<Vector2Int> shiftsSimple = new List<Vector2Int>()
     {
         Vector2Int.right, Vector2Int.up
     };
 
-    public override void Init()
+    protected override void Init()
     {
         maze.CurrentCell = new Vector2Int(0, 0);
     }
 
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();
 

@@ -1072,6 +1072,7 @@ MonoBehaviour:
   SizeInput: {fileID: 521615406}
   WallWidthInput: {fileID: 1720876742}
   targetRawImage: {fileID: 1013055137}
+  generatorToggles: {fileID: 269719257}
 --- !u!114 &1013055137
 MonoBehaviour:
   m_ObjectHideFlags: 0

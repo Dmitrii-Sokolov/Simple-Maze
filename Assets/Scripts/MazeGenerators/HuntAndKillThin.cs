@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://wiki.roblox.com/index.php/Hunt-and-Kill
-public class HuntAndKillThin : BaseMazeGenerator
+public class HuntAndKillThin : MazeGenerator<WalledMaze>
 {
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();
 

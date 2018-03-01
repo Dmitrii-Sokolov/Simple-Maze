@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://progressor-blog.ru/qt/generatsiya-labirinta-i-ego-prohozhdenie/
-public class RecursiveUnionThin : BaseMazeGenerator
+public class RecursiveUnionThin : MazeGenerator<WalledMaze>
 {
     Queue<IntRect> rects = new Queue<IntRect>();
 
-    public override void Init()
+    protected override void Init()
     {
         rects.Clear();
         rects.Enqueue(new IntRect(new Vector2Int(0, 0), new Vector2Int(maze.Width - 1, maze.Height - 1)));
@@ -15,6 +15,9 @@ public class RecursiveUnionThin : BaseMazeGenerator
 
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         if (rects.Count == 0)
             return false;
 

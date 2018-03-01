@@ -15,8 +15,6 @@ public class CelledMaze : IMaze
         Height = 2;
     }
 
-    private IMazeGenerator generator { set; get; }
-
     protected static Color Temprorary = Color.yellow;
     protected static Color Rig = Color.red;
     protected static Color Full = Color.black;

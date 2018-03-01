@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //http://progressor-blog.ru/qt/generatsiya-labirinta-i-ego-prohozhdenie/
-public class RecursiveDivisionThin : BaseMazeGenerator
+public class RecursiveDivisionThin : MazeGenerator<WalledMaze>
 {
     Queue<IntRect> rects = new Queue<IntRect>();
 
-    public override void Init()
+    protected override void Init()
     {
         rects.Clear();
 
@@ -28,6 +28,9 @@ public class RecursiveDivisionThin : BaseMazeGenerator
 
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         if (rects.Count == 0)
             return false;
 

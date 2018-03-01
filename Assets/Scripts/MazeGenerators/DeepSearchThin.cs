@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeepSearchThin : BaseMazeGenerator
+public class DeepSearchThin : MazeGenerator<WalledMaze>
 {
     private Stack<Vector2Int> MazeTrace = new Stack<Vector2Int>();
 
-    public override void Init()
+    protected override void Init()
     {
         MazeTrace.Clear();
     }
 
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();
 

@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/321210/
-public class AldousBroderThin : BaseMazeGenerator
+public class AldousBroderThin : MazeGenerator<WalledMaze>
 {
     private int cells;
 
-    public override void Init()
+    protected override void Init()
     {
         cells = maze.Width * maze.Height - 1;
     }
 
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();
 

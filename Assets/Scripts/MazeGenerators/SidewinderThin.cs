@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/320140/
-public class SidewinderThin : BaseMazeGenerator
+public class SidewinderThin : MazeGenerator<WalledMaze>
 {
     private const float horChance = 0.6f;
     private int rowStart;
 
-    public override void Init()
+    protected override void Init()
     {
         maze.CurrentCell = new Vector2Int(0, 0);
         rowStart = 0;
@@ -16,6 +16,9 @@ public class SidewinderThin : BaseMazeGenerator
 
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         maze.SetPass(maze.CurrentCell, true);
         var next = maze.CurrentCell + Vector2Int.right;
 

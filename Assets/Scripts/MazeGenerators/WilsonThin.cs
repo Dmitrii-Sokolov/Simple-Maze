@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://habrahabr.ru/post/321210/
-public class WilsonThin : BaseMazeGenerator
+public class WilsonThin : MazeGenerator<WalledMaze>
 {
     private List<Vector2Int> MazeTrace = new List<Vector2Int>();
     private int cells;
     protected int[,] OldCells;
 
-    public override void Init()
+    protected override void Init()
     {
         maze.SetPass(maze.CurrentCell, true);
         MazeTrace.Clear();
@@ -23,6 +23,9 @@ public class WilsonThin : BaseMazeGenerator
 
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         if (cells != 0)
         {
             if (maze.GetPass(maze.CurrentCell))

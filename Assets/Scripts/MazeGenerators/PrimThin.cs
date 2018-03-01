@@ -4,14 +4,14 @@ using System.Linq;
 using UnityEngine;
 
 //https://ru.wikipedia.org/wiki/Алгоритм_Прима
-public class PrimThin : BaseMazeGenerator
+public class PrimThin : MazeGenerator<WalledMaze>
 {
     private LinkedList<Edge> Ratios = new LinkedList<Edge>();
     private float[,] vertRatios;
     private float[,] horRatios;
     private int cells;
 
-    public override void Init()
+    protected override void Init()
     {
 
         Ratios.Clear();
@@ -30,6 +30,9 @@ public class PrimThin : BaseMazeGenerator
 
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         maze.SetPass(maze.CurrentCell, true);
         if (cells == 0)
             return false;

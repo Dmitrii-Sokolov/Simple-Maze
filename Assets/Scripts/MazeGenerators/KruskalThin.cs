@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //https://ru.wikipedia.org/wiki/Алгоритм_Краскала
-public class KruskalThin : BaseMazeGenerator
+public class KruskalThin : MazeGenerator<WalledMaze>
 {
     private const bool ShowOnlyPossibleSteps = true;
     private Edge[] Ratios;
@@ -11,7 +11,7 @@ public class KruskalThin : BaseMazeGenerator
     private int cells;
     private int index;
 
-    public override void Init()
+    protected override void Init()
     {
         cells = maze.Width * maze.Height - 1;
         index = 0;
@@ -36,6 +36,9 @@ public class KruskalThin : BaseMazeGenerator
 
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         if (GetGroup(Ratios[index].from) != GetGroup(Ratios[index].to))
         {
             SetGroupRecursively(Ratios[index].to, GetGroup(Ratios[index].from));

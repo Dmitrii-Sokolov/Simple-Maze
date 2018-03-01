@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeepSearchThick : BaseMazeGenerator
+public class DeepSearchThick : MazeGenerator<CelledMaze>
 {
     private Stack<Vector2Int> MazeTrace = new Stack<Vector2Int>();
     private sbyte[,] nodeDegrees;
 
-    public override void Init()
+    protected override void Init()
     {
         MazeTrace.Clear();
 
@@ -19,6 +19,9 @@ public class DeepSearchThick : BaseMazeGenerator
 
     public override bool NextStep()
     {
+        if (base.NextStep())
+            return false;
+
         if (!maze.GetPass(maze.CurrentCell))
         {
             maze.SetPass(maze.CurrentCell, true);

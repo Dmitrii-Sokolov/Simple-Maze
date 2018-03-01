@@ -19,6 +19,9 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private RawImage targetRawImage;
 
+    [SerializeField]
+    private GeneratorToggles generatorToggles;
+
     IMazeGenerator mazeGenerator;
     RectTransform rectTransform;
 
@@ -99,8 +102,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
             Maze.WallWidth = WallWidth;
             NeedRedraw = true;
 
-            if (mazeGenerator != null)
-                mazeGenerator.SetMaze(Maze);
+            generatorToggles.Generate(type);
         }
         else
             Debug.LogError("Invalid maze type match.");
@@ -164,6 +166,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
 
         if (isAutoMaze)
         {
+            UnityEngine.Profiling.Profiler.BeginSample(string.Format("Profiling Generator: {0}", mazeGenerator.GetType().ToString()));
             while (currentStep < stepsCount)
             {
                 NeedRedraw = true;
@@ -175,6 +178,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
                     break;
                 }
             }
+            UnityEngine.Profiling.Profiler.EndSample();
         }
 
         if (NeedRedraw)
