@@ -79,6 +79,7 @@ public class GeneratorToggles : MonoBehaviour
             newButton.GetComponent<Toggle>().group = group;
         }
 
-        listRoot.GetComponentInChildren<Toggle>().isOn = true;
+        if (buttons.Count != 0)
+            buttons.First().GetComponent<Toggle>().isOn = true;
     }
 }
