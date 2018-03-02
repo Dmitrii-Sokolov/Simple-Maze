@@ -53,6 +53,28 @@ public struct IntRect
     }
 }
 
+public struct Cell : System.IComparable<Cell>
+{
+    public Vector2Int place;
+    public float ratio;
+
+    public Cell(Vector2Int place, float ratio)
+    {
+        this.place = place;
+        this.ratio = ratio;
+    }
+
+    public int CompareTo(Cell obj)
+    {
+        if (ratio > obj.ratio)
+            return 1;
+        if (ratio < obj.ratio)
+            return -1;
+        else
+            return 0;
+    }
+}
+
 public struct Edge : System.IComparable<Edge>
 {
     public Vector2Int from;
