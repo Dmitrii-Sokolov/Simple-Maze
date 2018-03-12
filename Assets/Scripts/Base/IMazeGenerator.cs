@@ -1,6 +1,14 @@
-﻿public interface IMazeGenerator
+﻿using UnityEngine;
+
+public interface IMazeGenerator
 {
-    void SetMaze(IMaze target);
+    void SetSize(int size);
+
+    void SetSize(Vector2Int size);
+
+    IMaze Maze { get;}
+
+    void Clear();
 
     void Generate();
 

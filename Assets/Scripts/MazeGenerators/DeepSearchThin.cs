@@ -19,7 +19,7 @@ public class DeepSearchThin : MazeGenerator<WalledMaze>
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();
 
-        foreach (var item in CelledMaze.Shifts)
+        foreach (var item in RectangleMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))

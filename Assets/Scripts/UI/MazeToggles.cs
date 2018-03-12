@@ -36,8 +36,8 @@ public class MazeToggles : MonoBehaviour
 
         if (group == null)
             Debug.LogError("GenerateToggle : group isn't set");
-
-        var mazeGeneratorTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IMaze))).ToArray();
+        
+        var mazeGeneratorTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.BaseType == typeof(RectangleMaze)).ToArray();
         foreach (var element in mazeGeneratorTypes)
         {
             var newButton = Instantiate(togglePrefab, listRoot);

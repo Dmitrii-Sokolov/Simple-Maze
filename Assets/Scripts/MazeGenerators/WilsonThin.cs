@@ -48,7 +48,7 @@ public class WilsonThin : MazeGenerator<WalledMaze>
             else
             {
                 var choices = new List<Vector2Int>();
-                foreach (var item in CelledMaze.Shifts)
+                foreach (var item in RectangleMaze.Shifts)
                 {
                     var adj = maze.CurrentCell + item;
                     if (MazeTrace.Count < 2 || MazeTrace[MazeTrace.Count - 2] != adj)

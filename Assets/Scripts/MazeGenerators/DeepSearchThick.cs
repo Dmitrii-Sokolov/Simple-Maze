@@ -25,7 +25,7 @@ public class DeepSearchThick : MazeGenerator<CelledMaze>
         if (!maze.GetPass(maze.CurrentCell))
         {
             maze.SetPass(maze.CurrentCell, true);
-            foreach (var item in CelledMaze.Shifts)
+            foreach (var item in RectangleMaze.Shifts)
             {
                 var adj = maze.CurrentCell + item;
                 if (maze.InMaze(adj))
@@ -35,7 +35,7 @@ public class DeepSearchThick : MazeGenerator<CelledMaze>
 
         var choices = new List<Vector2Int>();
 
-        foreach (var item in CelledMaze.Shifts)
+        foreach (var item in RectangleMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))

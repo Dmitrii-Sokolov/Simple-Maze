@@ -38,7 +38,6 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
 
     private bool isAutoMaze = true;
     private bool NeedRedraw = true;
-    private IMaze Maze;
 
     private float StepsPerSecond
     {
@@ -52,11 +51,9 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
     {
         set
         {
-            if (null != Maze)
+            if (null != mazeGenerator)
             {
-                Maze.SetSize(value);
-                if (mazeGenerator != null)
-                    mazeGenerator.SetMaze(Maze);
+                mazeGenerator.SetSize(value);
             }
             Command(lastCommand);
         }
@@ -70,8 +67,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
     {
         set
         {
-            if (null != Maze)
-                Maze.WallWidth = value;
+            targetRawImage.material.SetFloat("_WallWidth", Mathf.Clamp01(WallWidth));
         }
         get
         {
@@ -92,20 +88,12 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
 
     public void SetMazeType(Type type)
     {
-        var probe = Activator.CreateInstance(type) as IMaze;
-        if (probe != null)
-        {
-            Maze = probe;
-            targetRawImage.material = Resources.Load<Material>(type.ToString()) ?? Graphic.defaultGraphicMaterial;
-            Maze.SetSize(Size);
-            Maze.Material = targetRawImage.material;
-            Maze.WallWidth = WallWidth;
-            NeedRedraw = true;
+        generatorToggles.Generate(type);
 
-            generatorToggles.Generate(type);
-        }
-        else
-            Debug.LogError("Invalid maze type match.");
+        targetRawImage.material = Resources.Load<Material>(type.ToString()) ?? Graphic.defaultGraphicMaterial;
+        targetRawImage.material.SetFloat("_WallWidth", Mathf.Clamp01(WallWidth));
+
+        NeedRedraw = true;
     }
 
     public void SetGeneratorType(Type type)
@@ -114,13 +102,8 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
         if (probe != null)
         {
             mazeGenerator = probe;
+            mazeGenerator.SetSize(Size);
             NeedRedraw = true;
-
-            if (Maze != null)
-            {
-                Maze.Clear();
-                mazeGenerator.SetMaze(Maze);
-            }
         }
         else
             Debug.LogError("Invalid maze generator type match.");
@@ -128,7 +111,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
 
     public void Command(CommandType command)
     {
-        if (mazeGenerator == null || Maze == null)
+        if (mazeGenerator == null)
             return;
 
         lastCommand = command;
@@ -153,8 +136,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
                 isAutoMaze = false;
                 break;
             case CommandType.Clear:
-                Maze.Clear();
-                mazeGenerator.SetMaze(Maze);
+                mazeGenerator.Clear();
                 break;
         }
     }
@@ -164,7 +146,7 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
         currentTime += Time.deltaTime;
         stepsCount += Time.deltaTime * StepsPerSecond;
 
-        if (isAutoMaze)
+        if (isAutoMaze && mazeGenerator != null)
         {
             UnityEngine.Profiling.Profiler.BeginSample(string.Format("Profiling Generator: {0}", mazeGenerator.GetType().ToString()));
             while (currentStep < stepsCount)
@@ -190,14 +172,14 @@ public class TextureGenerator : MonoBehaviour, IPointerClickHandler
 
     private void Visualize()
     {
-        targetRawImage.texture = Maze.GetTexture();
+        targetRawImage.texture = mazeGenerator.Maze.GetTexture();
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         var localPos = (eventData.pressPosition - (Vector2)rectTransform.position) - rectTransform.rect.position;
         var relativePos = new Vector2(localPos.x / rectTransform.rect.width, localPos.y / rectTransform.rect.height);
-        Maze.Click(relativePos);
+        mazeGenerator.Maze.Click(relativePos, WallWidth);
         Visualize();
     }
 }

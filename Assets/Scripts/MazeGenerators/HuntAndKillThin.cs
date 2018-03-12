@@ -13,7 +13,7 @@ public class HuntAndKillThin : MazeGenerator<WalledMaze>
         maze.SetPass(maze.CurrentCell, true);
         var choices = new List<Vector2Int>();
 
-        foreach (var item in CelledMaze.Shifts)
+        foreach (var item in RectangleMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))
@@ -28,7 +28,7 @@ public class HuntAndKillThin : MazeGenerator<WalledMaze>
                 {
                     var hunter = new Vector2Int(i, n);
                     if (!maze.GetPass(hunter))
-                        foreach (var item in CelledMaze.Shifts)
+                        foreach (var item in RectangleMaze.Shifts)
                         {
                             var adj = hunter + item;
                             if (maze.InMaze(adj))

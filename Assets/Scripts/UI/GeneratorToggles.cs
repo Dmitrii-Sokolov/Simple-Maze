@@ -69,7 +69,6 @@ public class GeneratorToggles : MonoBehaviour
         buttons.Clear();
         
         var mazeGeneratorTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsGenericTypeWithArgs(typeof(MazeGenerator<>), new[] { mazeType })).ToArray();
-        //var mazeGeneratorTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IMazeGenerator))).ToArray();
         foreach (var element in mazeGeneratorTypes)
         {
             var newButton = Instantiate(togglePrefab, listRoot);

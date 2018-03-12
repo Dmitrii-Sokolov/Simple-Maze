@@ -35,7 +35,7 @@ public class NoiseThick : MazeGenerator<CelledMaze>
         var nears = new HashSet<int>();
         var passThrough = true;
 
-        foreach (var item in CelledMaze.Shifts)
+        foreach (var item in RectangleMaze.Shifts)
         {
             var adj = maze.CurrentCell + item;
             if (maze.InMaze(adj))
@@ -58,7 +58,7 @@ public class NoiseThick : MazeGenerator<CelledMaze>
         }
 
         index++;
-        if (Ratios.Length == index)
+        if (Ratios.Length <= index)
             return false;
 
         maze.CurrentCell = Ratios[index].place;
@@ -69,7 +69,7 @@ public class NoiseThick : MazeGenerator<CelledMaze>
     private void SetGroupRecursively(Vector2Int cell, int group)
     {
         SetGroup(cell, group);
-        foreach (var item in CelledMaze.Shifts)
+        foreach (var item in RectangleMaze.Shifts)
         {
             var adj = cell + item;
             if (maze.InMaze(adj) && maze.GetPass(adj) && GetGroup(adj) != group)
