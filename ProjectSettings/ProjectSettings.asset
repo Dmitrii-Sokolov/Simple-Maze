@@ -614,10 +614,10 @@ PlayerSettings:
   facebookXfbml: 0
   facebookFrictionlessRequests: 1
   apiCompatibilityLevel: 6
-  cloudProjectId: 1804774d-547c-422a-b3e8-baac51f3496c
+  cloudProjectId: 
   framebufferDepthMemorylessMode: 0
-  projectName: Just a maze
-  organizationId: dsapsan
+  projectName: 
+  organizationId: 
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0
